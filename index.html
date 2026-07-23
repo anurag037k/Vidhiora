@@ -52,7 +52,7 @@
 
   <div class="h-1.5 w-full bg-gradient-to-r from-slate-900 via-[#d4af37] to-slate-900"></div>
 
-  <!-- NAVBAR -->
+<!-- NAVBAR -->
   <nav class="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-20">
@@ -75,8 +75,9 @@
             <span id="role-badge" class="hidden bg-rose-100 text-rose-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">Faculty</span>
             <img id="user-avatar" src="" class="w-10 h-10 rounded-full border-2 border-amber-200 shadow-sm hidden">
             <div class="flex flex-col text-left">
-              <span id="user-name" class="text-xs font-bold text-slate-900"></span>
-              <button onclick="logout()" class="text-[10px] text-slate-400 hover:text-rose-600 text-left uppercase font-bold transition">Sign Out</button>
+              <!-- FIXED: Desktop Name is now a clickable button -->
+              <button onclick="if(userRole === 'faculty') nav('admin');" id="user-name" class="text-xs font-bold text-slate-900 hover:text-amber-600 transition text-left cursor-pointer"></button>
+              <button onclick="logout()" class="text-[10px] text-slate-400 hover:text-rose-600 text-left uppercase font-bold transition mt-0.5">Sign Out</button>
             </div>
           </div>
         </div>
@@ -94,12 +95,17 @@
       <button onclick="nav('quiz'); toggleMobileMenu()" class="block w-full text-left px-4 py-3 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Live Quiz</button>
       <button onclick="nav('qa'); toggleMobileMenu()" class="block w-full text-left px-4 py-3 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Q&A</button>
       <button onclick="nav('jobs'); toggleMobileMenu()" class="block w-full text-left px-4 py-3 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Career</button>
+      
       <div id="mobile-auth-btn" class="pt-2">
         <button onclick="openAuthModal(); toggleMobileMenu()" class="w-full btn-gold font-bold py-3 rounded-xl shadow-lg text-slate-900">Sign In</button>
       </div>
+      
       <div id="mobile-profile" class="hidden pt-2 border-t border-slate-100">
-        <div class="flex items-center gap-3 px-4 py-3"><span id="mobile-user-name" class="font-bold text-slate-900"></span></div>
-        <button onclick="logout(); toggleMobileMenu()" class="w-full text-left px-4 py-3 font-bold text-rose-600 hover:bg-rose-50 rounded-lg">Sign Out</button>
+        <!-- FIXED: Mobile Name is now a clickable button that routes to Admin -->
+        <button onclick="if(userRole === 'faculty') { nav('admin'); toggleMobileMenu(); }" class="w-full text-left px-4 py-3 hover:bg-slate-50 rounded-lg transition flex items-center gap-2">
+          <span id="mobile-user-name" class="font-bold text-slate-900 hover:text-amber-600 transition cursor-pointer"></span>
+        </button>
+        <button onclick="logout(); toggleMobileMenu()" class="w-full text-left px-4 py-3 font-bold text-rose-600 hover:bg-rose-50 rounded-lg transition">Sign Out</button>
       </div>
     </div>
   </nav>
