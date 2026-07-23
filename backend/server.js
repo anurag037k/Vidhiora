@@ -4,11 +4,13 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 
 const app = express();
-// Enable CORS for all routes so your frontend can connect
+// Enable CORS for REST routes
 app.use(cors());
 app.use(express.json());
 
 const server = http.createServer(app);
+
+// Initialize Socket.IO with broad CORS settings
 const io = new Server(server, { 
   cors: { 
     origin: "*", 
@@ -33,6 +35,8 @@ let content = {
 const FACULTY_SECRET = process.env.FACULTY_CODE || "FACULTY-2026";
 const ADMIN_SECRET = process.env.ADMIN_CODE || "ADMIN-MASTER-037";
 let validFacultyCodes = [FACULTY_SECRET, ADMIN_SECRET];
+
+// Live Quiz Leaderboard State
 let leaderboard = {};
 
 // --- REST API ENDPOINTS ---
@@ -80,25 +84,45 @@ app.delete('/api/delete/:type/:id', (req, res) => {
   }
 });
 
-// --- SOCKET.IO (LIVE QUIZ) ---
+// --- SOCKET.IO (LIVE QUIZ REALTIME SYSTEM) ---
 io.on('connection', (socket) => {
+  console.log(`[Socket.io] Client connected: ${socket.id}`);
+
+  // Broadcast quiz question from Faculty
   socket.on('faculty_start_quiz', (data) => {
     if (validFacultyCodes.includes(data.code)) {
+      console.log(`[Quiz] Question broadcasted: "${data.questionData.question}"`);
       io.emit('student_receive_question', data.questionData);
+    } else {
+      console.log(`[Quiz Error] Unauthorized attempt to start quiz.`);
     }
   });
 
+  // Handle Answer Submission from Student
   socket.on('student_submit_answer', (data) => {
-    const { email, name, points } = data; 
+    const { email, name, points } = data || {}; 
     
-    // Prevent crash if email is somehow missing
+    // Fallback key creation if email/name are missing
     const userKey = email || name || socket.id;
+    const displayName = name || email || "Anonymous Student";
+    const earnedPoints = typeof points === 'number' ? points : 0;
 
-    if (!leaderboard[userKey]) leaderboard[userKey] = { name: name || "Anonymous", score: 0 };
-    leaderboard[userKey].score += points;
+    if (!leaderboard[userKey]) {
+      leaderboard[userKey] = { name: displayName, score: 0 };
+    }
+    
+    leaderboard[userKey].score += earnedPoints;
+    console.log(`[Quiz Submission] ${displayName} (+${earnedPoints} pts). Total: ${leaderboard[userKey].score}`);
 
-    const sorted = Object.values(leaderboard).sort((a, b) => b.score - a.score);
-    io.emit('update_leaderboard', sorted);
+    // Sort leaderboard in descending order by score
+    const sortedLeaderboard = Object.values(leaderboard).sort((a, b) => b.score - a.score);
+    
+    // Broadcast updated leaderboard to all connected clients
+    io.emit('update_leaderboard', sortedLeaderboard);
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`[Socket.io] Client disconnected: ${socket.id}`);
   });
 });
 
