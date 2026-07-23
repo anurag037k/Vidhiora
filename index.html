@@ -5,66 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vidhiora - Legal Learning & Career Hub</title>
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  
   <style>
     :root {
-      --primary: #0f172a;
-      --accent: #38bdf8;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text: #1e293b;
+      --primary: #0f172a; --accent: #38bdf8; --bg: #f8fafc;
+      --card-bg: #ffffff; --text: #1e293b;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
     body { background-color: var(--bg); color: var(--text); }
 
-    header {
-      background-color: var(--primary);
-      color: white;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
+    /* Header */
+    header { background-color: var(--primary); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
     .brand h1 { color: var(--accent); font-size: 1.5rem; }
     .brand p { font-size: 0.75rem; color: #94a3b8; }
+    .mode-btn { background: #334155; color: white; border: 1px solid #475569; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; transition: 0.3s; }
+    .mode-btn:hover { background: #475569; }
 
-    .mode-btn {
-      background: #334155;
-      color: white;
-      border: 1px solid #475569;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    nav {
-      background-color: #1e293b;
-      display: flex;
-      gap: 0.5rem;
-      padding: 0.5rem 2rem;
-      overflow-x: auto;
-    }
-
-    nav button {
-      background: transparent;
-      color: #94a3b8;
-      border: none;
-      padding: 0.6rem 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      border-radius: 4px;
-      white-space: nowrap;
-    }
-
+    /* Navigation */
+    nav { background-color: #1e293b; display: flex; gap: 0.5rem; padding: 0.5rem 2rem; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+    nav button { background: transparent; color: #94a3b8; border: none; padding: 0.6rem 1rem; font-weight: 600; cursor: pointer; border-radius: 4px; transition: 0.2s; }
     nav button.active { background: #0284c7; color: white; }
+    
+    /* Highlight the Faculty Tab specially */
+    #nav-faculty { color: #fca5a5; }
+    #nav-faculty.active { background: #b91c1c; color: white; }
 
+    /* Main Content Layout */
     main { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
     .page { display: none; }
-    .page.active { display: block; }
+    .page.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    h2 { margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
 
-    h2 { margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; }
-
+    /* Grid & Cards */
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
     .card { background: var(--card-bg); padding: 1.25rem; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
 
@@ -72,48 +46,63 @@
     .badge-blue { background: #e0f2fe; color: #0369a1; }
     .badge-amber { background: #fef3c7; color: #b45309; }
     .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-faculty { background: #fee2e2; color: #b91c1c; }
 
-    .btn { width: 100%; padding: 0.6rem; border: none; border-radius: 4px; font-weight: 600; cursor: pointer; margin-top: 1rem; }
+    .btn { width: 100%; padding: 0.8rem; border: none; border-radius: 4px; font-weight: 600; cursor: pointer; margin-top: 1rem; }
     .btn-primary { background: #0284c7; color: white; }
     .btn-success { background: #16a34a; color: white; }
+    .btn-danger { background: #dc2626; color: white; }
 
-    .quiz-box { background: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; }
-    input[type="text"] { width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 4px; margin-bottom: 1rem; }
+    /* Forms & Inputs */
+    .form-group { margin-bottom: 1rem; }
+    input[type="text"], textarea { width: 100%; padding: 0.8rem; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 1rem; }
+    textarea { resize: vertical; min-height: 80px; }
 
-    .option-btn { display: block; width: 100%; padding: 0.75rem; margin: 0.5rem 0; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 4px; text-align: left; cursor: pointer; }
-    .leaderboard-row { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #f1f5f9; }
+    /* Mobile Responsiveness */
+    @media (max-width: 600px) {
+      header { flex-direction: column; text-align: center; gap: 15px; padding: 1rem; }
+      nav { padding: 0.5rem 1rem; }
+      main { margin: 1rem auto; }
+      .grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 
+  <!-- HEADER -->
   <header>
     <div class="brand">
       <h1>Vidhiora</h1>
       <p>Legal Knowledge Hub</p>
     </div>
-    <button class="mode-btn" onclick="toggleMode()">Mode: <strong id="mode-text">STUDENT</strong></button>
+    <!-- Login Button for Faculty -->
+    <button class="mode-btn" id="role-btn" onclick="toggleMode()">Role: <strong>STUDENT</strong> (Click for Faculty Login)</button>
   </header>
 
+  <!-- NAVIGATION -->
   <nav>
     <button class="nav-link active" onclick="switchTab(event, 'news')">📰 News</button>
     <button class="nav-link" onclick="switchTab(event, 'notes')">📚 Notes</button>
     <button class="nav-link" onclick="switchTab(event, 'bareacts')">⚖️ Bare Acts</button>
-    <button class="nav-link" onclick="switchTab(event, 'webinars')">🎥 Webinars</button>
     <button class="nav-link" onclick="switchTab(event, 'quiz')">🎯 Live Quiz</button>
-    <button class="nav-link" onclick="switchTab(event, 'career')">💼 Career</button>
+    <!-- Hidden by default, shows only if Faculty Code is correct -->
+    <button id="nav-faculty" class="nav-link" style="display:none;" onclick="switchTab(event, 'faculty-dashboard')">⚙️ Faculty Upload Portal</button>
   </nav>
 
   <main>
+    <!-- 1. NEWS (View Only) -->
     <section id="news" class="page active">
-      <h2>⚖️ Legal News & Judgments</h2>
+      <h2>⚖️ Legal News & Judgments <span style="font-size: 0.8rem; font-weight: normal; color: #64748b;">(View Only)</span></h2>
       <div class="grid" id="news-grid"></div>
     </section>
 
+    <!-- 2. NOTES (View & Download Only) -->
     <section id="notes" class="page">
-      <h2>📚 Study Notes & Resources</h2>
+      <h2>📚 Study Notes & Resources <span style="font-size: 0.8rem; font-weight: normal; color: #64748b;">(View & Download Only)</span></h2>
       <div class="grid" id="notes-grid"></div>
     </section>
 
+    <!-- 3. BARE ACTS (View Only) -->
     <section id="bareacts" class="page">
       <h2>📜 Bare Acts & Key Provisions</h2>
       <div class="card" style="margin-bottom: 1rem;">
@@ -123,115 +112,207 @@
       </div>
     </section>
 
-    <section id="webinars" class="page">
-      <h2>🎥 Live Webinars</h2>
-      <div class="grid">
-        <div class="card">
-          <span class="badge badge-green">Upcoming</span>
-          <h3>Moot Court Drafting & Argument Strategy</h3>
-          <p>Speaker: Adv. Rajesh Kumar (Supreme Court)</p>
-          <button class="btn btn-success">Join Interactive Session</button>
-        </div>
-      </div>
-    </section>
-
+    <!-- 4. QUIZ (Students answer here) -->
     <section id="quiz" class="page">
       <h2>🎯 Live Quiz Arena</h2>
       
-      <div id="faculty-controls" style="display: none;" class="quiz-box">
-        <h3>Faculty Quiz Panel</h3>
-        <p>Click to broadcast a real-time question to all active students.</p>
-        <button class="btn btn-primary" onclick="pushQuestion()">Push Live Question</button>
-      </div>
-
-      <div id="student-controls" class="quiz-box">
+      <div id="student-controls" class="card">
         <input type="text" id="student-name" placeholder="Enter your full name to join..." />
-        <div id="question-card" style="display: none;">
+        <div id="question-card" style="display: none; margin-top:15px;">
           <h3 id="question-text"></h3>
           <div id="options-container"></div>
         </div>
-        <p id="waiting-msg">Waiting for faculty to start the quiz...</p>
+        <p id="waiting-msg" style="margin-top:10px; color:#64748b;">Waiting for a faculty member to start a live question...</p>
       </div>
 
-      <h3>🏆 Live Leaderboard</h3>
-      <div class="quiz-box" id="leaderboard">
+      <h3 style="margin-top: 2rem;">🏆 Live Leaderboard</h3>
+      <div class="card" id="leaderboard">
         <p>No scores submitted yet.</p>
       </div>
     </section>
 
-    <section id="career" class="page">
-      <h2>💼 Opportunities & Internships</h2>
-      <div class="grid" id="career-grid"></div>
+    <!-- 5. FACULTY UPLOAD PORTAL (Strictly locked by Faculty Code) -->
+    <section id="faculty-dashboard" class="page">
+      <h2>⚙️ Faculty Content Management System</h2>
+      <p style="color: #b91c1c; margin-bottom: 1.5rem;"><strong>Authorized Access Only.</strong> You can push live quizzes and upload permanent content to the platform from here.</p>
+      
+      <div class="grid">
+        <!-- Post News Form -->
+        <div class="card" style="border-top: 4px solid #b91c1c;">
+          <span class="badge badge-faculty">Post News/Article</span>
+          <div class="form-group"><input type="text" id="news-cat" placeholder="Category (e.g., Cyber Law)" /></div>
+          <div class="form-group"><input type="text" id="news-title" placeholder="Article Title" /></div>
+          <div class="form-group"><textarea id="news-summary" placeholder="Brief summary or details..."></textarea></div>
+          <button class="btn btn-danger" onclick="postNews()">Publish Article</button>
+        </div>
+
+        <!-- Post Notes Form -->
+        <div class="card" style="border-top: 4px solid #b45309;">
+          <span class="badge badge-amber">Upload Study Note</span>
+          <div class="form-group"><input type="text" id="note-sub" placeholder="Subject (e.g., Criminal Law)" /></div>
+          <div class="form-group"><input type="text" id="note-title" placeholder="Document Title" /></div>
+          <div class="form-group"><input type="text" id="note-author" placeholder="Author / Professor Name" /></div>
+          <button class="btn btn-primary" onclick="postNote()">Publish Note</button>
+        </div>
+        
+        <!-- Push Quiz Form -->
+        <div class="card" style="border-top: 4px solid #0284c7;">
+          <span class="badge badge-blue">Live Quiz Broadcaster</span>
+          <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #64748b;">Push a real-time question to all active students on the platform.</p>
+          <div class="form-group"><input type="text" id="quiz-q" placeholder="Enter Question" /></div>
+          <div class="form-group"><input type="text" id="quiz-opt1" placeholder="Option 1" /></div>
+          <div class="form-group"><input type="text" id="quiz-opt2" placeholder="Option 2" /></div>
+          <div class="form-group"><input type="text" id="quiz-opt3" placeholder="Option 3" /></div>
+          <div class="form-group"><input type="text" id="quiz-opt4" placeholder="Option 4" /></div>
+          <div class="form-group"><input type="text" id="quiz-ans" placeholder="Type Correct Option Exact Match" /></div>
+          <button class="btn btn-primary" onclick="pushCustomQuestion()">Broadcast Question Live</button>
+        </div>
+      </div>
     </section>
+
   </main>
 
   <script>
-    // Replace with your live Render URL once backend is deployed
+    // Make sure this points to your live Render backend
     const BACKEND_URL = "https://vidhiora-5m6s.onrender.com"; 
     
     let role = 'student';
     let socket = io(BACKEND_URL);
     let currentQuestion = null;
 
+    // The Secret Faculty Authorization Code
+    const FACULTY_CODE = "VIDHIORA-FACULTY-2026";
+
+    // 1. Fetch & Render Read-Only Content for Students
     async function fetchContent() {
       try {
-        const [newsRes, notesRes, careerRes] = await Promise.all([
+        const [newsRes, notesRes] = await Promise.all([
           fetch(`${BACKEND_URL}/api/news`),
-          fetch(`${BACKEND_URL}/api/notes`),
-          fetch(`${BACKEND_URL}/api/career`)
+          fetch(`${BACKEND_URL}/api/notes`)
         ]);
 
         const news = await newsRes.json();
         const notes = await notesRes.json();
-        const careers = await careerRes.json();
 
+        // Render News (Read Only)
         document.getElementById('news-grid').innerHTML = news.map(n => `
           <div class="card">
             <span class="badge badge-blue">${n.category}</span>
             <h3>${n.title}</h3>
-            <p>${n.summary}</p>
+            <p style="margin-top:10px; color:#475569;">${n.summary}</p>
           </div>
         `).join('');
 
+        // Render Notes (Download Only)
         document.getElementById('notes-grid').innerHTML = notes.map(n => `
           <div class="card">
             <span class="badge badge-amber">${n.subject}</span>
             <h3>${n.title}</h3>
-            <p>Uploaded by: ${n.uploadedBy}</p>
-            <button class="btn btn-primary">Download PDF</button>
-          </div>
-        `).join('');
-
-        document.getElementById('career-grid').innerHTML = careers.map(c => `
-          <div class="card">
-            <span class="badge badge-green">${c.type}</span>
-            <h3>${c.title}</h3>
-            <p>Stipend: ${c.stipend}</p>
-            <button class="btn btn-success">Apply Now</button>
+            <p style="margin-top:10px; color:#475569;">Uploaded by: ${n.uploadedBy}</p>
+            <button class="btn btn-primary" style="margin-top:15px;" onclick="alert('Downloading PDF...')">Download PDF</button>
           </div>
         `).join('');
       } catch (err) {
-        console.error("Backend offline or loading local fallbacks.", err);
+        console.error("Backend offline.", err);
       }
     }
-
     fetchContent();
 
+    // 2. Tab Switching
     function switchTab(evt, tabId) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
-      
       document.getElementById(tabId).classList.add('active');
       evt.target.classList.add('active');
     }
 
+    // 3. SECURE FACULTY LOGIN SYSTEM
     function toggleMode() {
-      role = role === 'student' ? 'faculty' : 'student';
-      document.getElementById('mode-text').innerText = role.toUpperCase();
-      document.getElementById('faculty-controls').style.display = role === 'faculty' ? 'block' : 'none';
-      document.getElementById('student-controls').style.display = role === 'student' ? 'block' : 'none';
+      if (role === 'student') {
+        const code = prompt("FACULTY LOGIN\n\nPlease enter the authorized Faculty Code to gain upload access:");
+        
+        if (code === FACULTY_CODE) {
+          role = 'faculty';
+          document.getElementById('nav-faculty').style.display = 'block';
+          document.getElementById('role-btn').innerHTML = "Role: <strong style='color:#fca5a5;'>FACULTY</strong> (Log out)";
+          document.getElementById('role-btn').style.background = "#991b1b";
+          alert("Authorization Successful. You now have CMS upload access.");
+          switchTab({target: document.getElementById('nav-faculty')}, 'faculty-dashboard');
+        } else {
+          alert("Invalid Faculty Code. Access Denied. You are remaining in Student mode.");
+        }
+      } else {
+        // Logging out of Faculty Mode
+        role = 'student';
+        document.getElementById('nav-faculty').style.display = 'none';
+        document.getElementById('role-btn').innerHTML = "Role: <strong>STUDENT</strong> (Click for Faculty Login)";
+        document.getElementById('role-btn').style.background = "#334155";
+        switchTab({target: document.querySelector('.nav-link')}, 'news'); 
+        alert("Logged out of Faculty Mode.");
+      }
     }
 
+    // 4. Faculty: Post News
+    async function postNews() {
+      if(role !== 'faculty') return alert("Unauthorized!");
+      const category = document.getElementById('news-cat').value;
+      const title = document.getElementById('news-title').value;
+      const summary = document.getElementById('news-summary').value;
+
+      if(!category || !title || !summary) return alert("Fill all fields!");
+
+      await fetch(`${BACKEND_URL}/api/news`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category, title, summary })
+      });
+
+      alert("Article Published to Students!");
+      document.getElementById('news-cat').value = ''; document.getElementById('news-title').value = ''; document.getElementById('news-summary').value = '';
+      fetchContent(); 
+    }
+
+    // 5. Faculty: Post Note
+    async function postNote() {
+      if(role !== 'faculty') return alert("Unauthorized!");
+      const subject = document.getElementById('note-sub').value;
+      const title = document.getElementById('note-title').value;
+      const uploadedBy = document.getElementById('note-author').value;
+
+      if(!subject || !title || !uploadedBy) return alert("Fill all fields!");
+
+      await fetch(`${BACKEND_URL}/api/notes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject, title, uploadedBy })
+      });
+
+      alert("Study Note Published to Students!");
+      document.getElementById('note-sub').value = ''; document.getElementById('note-title').value = ''; document.getElementById('note-author').value = '';
+      fetchContent(); 
+    }
+
+    // 6. Faculty: Push Custom Live Question
+    function pushCustomQuestion() {
+      if(role !== 'faculty') return alert("Unauthorized!");
+      const q = document.getElementById('quiz-q').value;
+      const opt1 = document.getElementById('quiz-opt1').value;
+      const opt2 = document.getElementById('quiz-opt2').value;
+      const opt3 = document.getElementById('quiz-opt3').value;
+      const opt4 = document.getElementById('quiz-opt4').value;
+      const ans = document.getElementById('quiz-ans').value;
+
+      if(!q || !opt1 || !opt2 || !opt3 || !opt4 || !ans) return alert("Fill all quiz fields!");
+
+      socket.emit('faculty_start_quiz', {
+        question: q,
+        options: [opt1, opt2, opt3, opt4],
+        correctAnswer: ans
+      });
+      alert("Custom Question broadcasted to all active students!");
+    }
+
+    // 7. Student: Receive and Answer Quiz
     socket.on('student_receive_question', (q) => {
       currentQuestion = q;
       document.getElementById('waiting-msg').style.display = 'none';
@@ -239,7 +320,7 @@
       document.getElementById('question-text').innerText = q.question;
       
       document.getElementById('options-container').innerHTML = q.options.map(opt => 
-        `<button class="option-btn" onclick="submitAnswer('${opt}')">${opt}</button>`
+        `<button class="btn" style="background:#f1f5f9; color:#0f172a; border:1px solid #cbd5e1; text-align:left;" onclick="submitAnswer('${opt}')">${opt}</button>`
       ).join('');
     });
 
@@ -252,14 +333,6 @@
       `).join('') || '<p>No scores submitted yet.</p>';
     });
 
-    function pushQuestion() {
-      socket.emit('faculty_start_quiz', {
-        question: "Which Article of the Indian Constitution guarantees Constitutional Remedies?",
-        options: ["Article 14", "Article 19", "Article 21", "Article 32"],
-        correctAnswer: "Article 32"
-      });
-    }
-
     function submitAnswer(opt) {
       const name = document.getElementById('student-name').value;
       if (!name) return alert("Please enter your name first!");
@@ -268,6 +341,7 @@
       socket.emit('student_submit_answer', { studentName: name, points: points });
       
       document.getElementById('question-card').style.display = 'none';
+      document.getElementById('waiting-msg').innerText = "Answer submitted! Waiting for the faculty to send the next question...";
       document.getElementById('waiting-msg').style.display = 'block';
     }
   </script>
