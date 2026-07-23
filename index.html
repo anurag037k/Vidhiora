@@ -40,7 +40,6 @@
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
     
-    /* Marquee Animation for Announcements */
     .marquee-container { overflow: hidden; white-space: nowrap; }
     .marquee-content { display: inline-block; animation: marquee 25s linear infinite; }
     @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
@@ -58,7 +57,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-20">
         <div class="flex items-center gap-3 cursor-pointer" onclick="nav('home')">
-          <img src="./logo.png" alt="Vidhiora Logo" class="h-12 w-auto">
+          <img src="logo.png" alt="Vidhiora Logo" class="h-12 w-auto">
           <span class="font-serif font-bold text-3xl tracking-tight text-slate-900">Vidhiora</span>
         </div>
         
@@ -120,7 +119,7 @@
           </div>
           <div class="flex justify-center border border-slate-200 p-4 rounded-xl bg-slate-50 shadow-inner">
             <!-- PASTE YOUR GOOGLE CLIENT ID BELOW -->
-            <div id="g_id_onload" data-client_id="YOUR_GOOGLE_CLIENT_ID_HERE" data-callback="handleGoogleLogin"></div>
+            <div id="g_id_onload" data-client_id="356568812180-p3u8ttkv5nis5tv786mrf78aca83eib9.apps.googleusercontent.com" data-login_uri="" data-auto_prompt="false" data-callback="handleGoogleLogin"></div>
             <div class="g_id_signin" data-type="standard" data-theme="outline" data-size="large" data-text="sign_in_with"></div>
           </div>
         </div>
@@ -243,10 +242,10 @@
     <!-- PAGE: ADMIN DASHBOARD -->
     <section id="admin" class="page">
       <div class="bg-navy rounded-[2rem] p-10 mb-10 text-white shadow-2xl relative overflow-hidden">
-        <h2 class="text-3xl md:text-4xl font-serif font-bold"><i class="fa-solid fa-server mr-4 text-amber-400"></i>Faculty Control Center</h2>
+        <h2 class="text-3xl md:text-4xl font-serif font-bold"><i class="fa-solid fa-server mr-4 text-amber-400"></i>Faculty & Admin Control Center</h2>
       </div>
       
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-10">
         <div class="glass-card p-8 border-t-4 border-t-navy bg-white">
           <h3 class="font-serif font-bold text-2xl mb-6 text-slate-800"><i class="fa-solid fa-cloud-arrow-up text-navy mr-2"></i> Publish Content</h3>
           <div class="space-y-4">
@@ -275,6 +274,28 @@
             <input type="text" id="q-ans" placeholder="Correct Answer (Exact Match)" class="w-full p-3.5 border-2 border-emerald-300 rounded-xl bg-emerald-50 font-bold">
             <button onclick="broadcastQuiz()" class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl mt-2 hover:bg-slate-800">Broadcast Now</button>
           </div>
+        </div>
+      </div>
+
+      <!-- CENTRAL ADMIN MANAGEMENT TABLE -->
+      <div class="glass-card p-8 bg-white border-t-4 border-t-rose-500">
+        <h3 class="font-serif font-bold text-2xl mb-6 text-slate-800 flex items-center justify-between">
+          <span><i class="fa-solid fa-trash-can text-rose-500 mr-2"></i> Content Deletion Manager</span>
+          <span class="text-xs font-sans bg-rose-50 text-rose-600 px-3 py-1 rounded-full">Admin Privileges</span>
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 text-xs text-slate-400 uppercase tracking-wider">
+                <th class="py-3 px-4">Category</th>
+                <th class="py-3 px-4">Title / Heading</th>
+                <th class="py-3 px-4">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-management-table" class="text-sm divide-y divide-slate-100">
+              <!-- Populated dynamically via JS -->
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -360,32 +381,50 @@
         document.getElementById('announcement-ticker').innerHTML = tickerString || "Welcome to Vidhiora";
         
         document.getElementById('events-container').innerHTML = announcements.map(a => `<div class="border-b border-slate-200 pb-2 last:border-0 relative">
-          ${userRole === 'faculty' ? `<button onclick="deleteContent('announcements', ${a.id})" class="absolute top-0 right-0 text-rose-500 hover:text-rose-700 text-xs transition"><i class="fa-solid fa-trash"></i></button>` : ''}
           <h4 class="font-bold text-sm text-slate-800 pr-6">${a.title}</h4><p class="text-[10px] text-amber-600 font-bold uppercase mt-0.5">${a.meta}</p><p class="text-xs text-slate-500 mt-1">${a.summary}</p></div>`).join('');
 
         document.getElementById('qa-container').innerHTML = qa.map(q => `<div class="glass-card p-6 border-l-4 border-navy relative">
-          ${userRole === 'faculty' ? `<button onclick="deleteContent('qa', ${q.id})" class="absolute top-4 right-4 bg-rose-50 text-rose-500 p-2 rounded-lg hover:bg-rose-100 text-xs font-bold transition"><i class="fa-solid fa-trash mr-1"></i>Delete</button>` : ''}
-          <h3 class="text-xl font-bold text-slate-900 mb-2 pr-20">Q: ${q.title}</h3><div class="text-xs bg-slate-100 inline-block px-2 py-1 rounded text-slate-500 mb-3">${q.meta}</div><p class="text-slate-700 bg-slate-50 p-4 rounded-lg border border-slate-100"><strong>Answer:</strong> ${q.summary}</p></div>`).join('');
+          <h3 class="text-xl font-bold text-slate-900 mb-2">Q: ${q.title}</h3><div class="text-xs bg-slate-100 inline-block px-2 py-1 rounded text-slate-500 mb-3">${q.meta}</div><p class="text-slate-700 bg-slate-50 p-4 rounded-lg border border-slate-100"><strong>Answer:</strong> ${q.summary}</p></div>`).join('');
 
         document.getElementById('cases-container').innerHTML = cases.map(c => `<div class="glass-card p-6 border-l-4 border-l-slate-800 relative">
-          ${userRole === 'faculty' ? `<button onclick="deleteContent('cases', ${c.id})" class="absolute top-4 right-4 bg-rose-50 text-rose-500 p-2 rounded-lg hover:bg-rose-100 text-xs font-bold transition"><i class="fa-solid fa-trash mr-1"></i>Delete</button>` : ''}
-          <h3 class="text-xl font-serif font-bold text-slate-900 mb-2 pr-20">${c.title}</h3><p class="text-[11px] font-bold text-slate-600 bg-slate-100 inline-block px-2 py-1 rounded uppercase mb-2"><i class="fa-solid fa-building-columns mr-1"></i> ${c.court}</p><p class="text-slate-600 text-sm">${c.summary}</p></div>`).join('');
+          <h3 class="text-xl font-serif font-bold text-slate-900 mb-2">${c.title}</h3><p class="text-[11px] font-bold text-slate-600 bg-slate-100 inline-block px-2 py-1 rounded uppercase mb-2"><i class="fa-solid fa-building-columns mr-1"></i> ${c.court}</p><p class="text-slate-600 text-sm">${c.summary}</p></div>`).join('');
         
         document.getElementById('blogs-container').innerHTML = blogs.map(b => `<div class="glass-card p-5 border-t-4 border-t-blue-800 flex flex-col h-full relative">
-          ${userRole === 'faculty' ? `<button onclick="deleteContent('blogs', ${b.id})" class="absolute top-4 right-4 bg-rose-50 text-rose-500 p-2 rounded-lg hover:bg-rose-100 text-xs font-bold transition"><i class="fa-solid fa-trash mr-1"></i>Delete</button>` : ''}
-          <span class="bg-blue-50 text-blue-800 text-[10px] font-bold px-2 py-1 rounded uppercase self-start">Article</span><h3 class="text-lg font-serif font-bold text-slate-900 mt-3 mb-1 line-clamp-2 pr-20">${b.title}</h3><p class="text-xs text-slate-400 mb-3">By <span class="text-slate-700">${b.author}</span></p><p class="text-slate-600 text-sm line-clamp-3 mt-auto">${b.summary}</p></div>`).join('');
+          <span class="bg-blue-50 text-blue-800 text-[10px] font-bold px-2 py-1 rounded uppercase self-start">Article</span><h3 class="text-lg font-serif font-bold text-slate-900 mt-3 mb-1 line-clamp-2">${b.title}</h3><p class="text-xs text-slate-400 mb-3">By <span class="text-slate-700">${b.author}</span></p><p class="text-slate-600 text-sm line-clamp-3 mt-auto">${b.summary}</p></div>`).join('');
         
         document.getElementById('notes-container').innerHTML = notes.map(n => `<div class="bg-white border border-slate-100 p-3 rounded-lg flex justify-between items-center hover:shadow-md transition cursor-pointer relative">
-          <div><h3 class="font-bold text-slate-800 text-sm">${n.title}</h3><p class="text-[10px] text-slate-500 mt-1">${n.uploadedBy} | ${n.subject}</p></div><div class="flex items-center gap-2">
-          ${userRole === 'faculty' ? `<button onclick="deleteContent('notes', ${n.id})" class="text-rose-500 hover:text-rose-700 text-sm p-1 transition"><i class="fa-solid fa-trash"></i></button>` : ''}<i class="fa-solid fa-download text-slate-300"></i></div></div>`).join('');
+          <div><h3 class="font-bold text-slate-800 text-sm">${n.title}</h3><p class="text-[10px] text-slate-500 mt-1">${n.uploadedBy} | ${n.subject}</p></div><i class="fa-solid fa-download text-slate-300"></i></div>`).join('');
         
         document.getElementById('jobs-container').innerHTML = jobs.map(j => `<div class="glass-card p-6 flex flex-col h-full border-t-4 border-t-emerald-500 relative">
-          ${userRole === 'faculty' ? `<button onclick="deleteContent('jobs', ${j.id})" class="absolute top-4 right-4 bg-rose-50 text-rose-500 p-2 rounded-lg hover:bg-rose-100 text-xs font-bold transition"><i class="fa-solid fa-trash mr-1"></i>Delete</button>` : ''}
-          <span class="bg-emerald-50 text-emerald-700 font-bold text-[10px] px-2 py-1 rounded self-start uppercase">${j.type}</span><h3 class="text-xl font-serif font-bold text-slate-900 mb-1 mt-3 pr-20">${j.title}</h3><p class="text-slate-500 text-sm mb-4"><i class="fa-solid fa-building mr-1"></i>${j.company}</p><div class="mt-auto border-t border-slate-100 pt-4 flex justify-between items-center"><span class="font-bold text-slate-800">${j.salary}</span><button class="bg-slate-900 text-white px-4 py-1.5 rounded-lg text-xs font-bold">Apply</button></div></div>`).join('');
+          <span class="bg-emerald-50 text-emerald-700 font-bold text-[10px] px-2 py-1 rounded self-start uppercase">${j.type}</span><h3 class="text-xl font-serif font-bold text-slate-900 mb-1 mt-3">${j.title}</h3><p class="text-slate-500 text-sm mb-4"><i class="fa-solid fa-building mr-1"></i>${j.company}</p><div class="mt-auto border-t border-slate-100 pt-4 flex justify-between items-center"><span class="font-bold text-slate-800">${j.salary}</span><button class="bg-slate-900 text-white px-4 py-1.5 rounded-lg text-xs font-bold">Apply</button></div></div>`).join('');
         
         document.getElementById('webinar-content').innerHTML = webinars.map(w => `<div class="glass-card overflow-hidden relative">
-          ${userRole === 'faculty' ? `<button onclick="deleteContent('webinars', ${w.id})" class="absolute top-2 left-2 z-10 bg-rose-500 text-white p-2 rounded-lg hover:bg-rose-600 text-xs font-bold transition"><i class="fa-solid fa-trash mr-1"></i>Delete</button>` : ''}
           <div class="bg-navy h-32 flex items-center justify-center relative"><i class="fa-brands fa-youtube text-5xl text-white/20"></i><div class="absolute top-2 right-2 bg-rose-500 text-white text-[10px] font-bold px-2 py-1 rounded uppercase"><span class="animate-pulse mr-1">●</span>LIVE</div></div><div class="p-5"><h3 class="font-serif font-bold text-lg text-slate-900 mb-1">${w.title}</h3><p class="text-slate-500 text-sm mb-4"><i class="fa-solid fa-microphone-lines mr-1"></i>${w.speaker}</p><button class="w-full bg-slate-100 text-slate-900 font-bold py-2 rounded-lg text-sm hover:bg-slate-200">Join Session</button></div></div>`).join('');
+
+        // Populate Central Admin Deletion Table
+        if (userRole === 'faculty') {
+          let allRows = '';
+          const formatRows = (items, typeName) => items.map(item => `
+            <tr class="hover:bg-slate-50 border-b border-slate-100">
+              <td class="py-3 px-4 font-bold text-xs uppercase text-slate-500">${typeName}</td>
+              <td class="py-3 px-4 font-medium text-slate-800">${item.title || item.subject}</td>
+              <td class="py-3 px-4">
+                <button onclick="deleteContent('${typeName}', ${item.id})" class="bg-rose-50 text-rose-600 hover:bg-rose-100 px-3 py-1.5 rounded-lg font-bold text-xs transition flex items-center gap-1 w-max">
+                  <i class="fa-solid fa-trash"></i> Delete
+                </button>
+              </td>
+            </tr>`).join('');
+
+          allRows += formatRows(announcements, 'announcements');
+          allRows += formatRows(qa, 'qa');
+          allRows += formatRows(cases, 'cases');
+          allRows += formatRows(blogs, 'blogs');
+          allRows += formatRows(notes, 'notes');
+          allRows += formatRows(jobs, 'jobs');
+          allRows += formatRows(webinars, 'webinars');
+
+          document.getElementById('admin-management-table').innerHTML = allRows || `<tr><td colspan="3" class="text-center py-6 text-slate-400">No content uploaded yet.</td></tr>`;
+        }
       } catch (err) { console.log("Backend offline."); }
     }
     loadData();
