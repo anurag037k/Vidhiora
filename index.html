@@ -3,370 +3,430 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vidhiora | Professional Legal Hub</title>
+  <title>Vidhiora | Premium Legal Education</title>
   
-  <!-- Tailwind CSS (Professional Styling) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Sign-In API -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <!-- Socket.io -->
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-    .page { display: none; animation: fadeIn 0.4s ease-in-out; }
+    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; -webkit-font-smoothing: antialiased; }
+    h1, h2, h3, .font-serif { font-family: 'Playfair Display', serif; }
+    
+    .page { display: none; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
     .page.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid #e2e8f0; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .glass-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); transition: transform 0.2s, box-shadow 0.2s; }
+    .glass-card:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
+    
+    .hero-bg { background: radial-gradient(circle at top right, #1e3a8a, #0f172a); color: white; }
+    #mobile-menu { transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
+    #mobile-menu.open { max-height: 400px; opacity: 1; }
   </style>
 </head>
-<body class="text-slate-800 antialiased">
+<body class="flex flex-col min-h-screen">
 
   <!-- NAVBAR -->
-  <nav class="bg-slate-900 text-white sticky top-0 z-50 shadow-lg">
+  <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-        <div class="flex items-center gap-2 cursor-pointer" onclick="nav('home')">
-          <i class="fa-solid fa-scale-balanced text-blue-400 text-2xl"></i>
-          <span class="font-bold text-xl tracking-wide">Vidhiora</span>
+      <div class="flex items-center justify-between h-20">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="nav('home')">
+          <div class="bg-slate-900 text-white p-2 rounded-lg flex items-center justify-center shadow-md">
+            <i class="fa-solid fa-scale-balanced text-xl"></i>
+          </div>
+          <span class="font-serif font-bold text-2xl tracking-tight">Vidhiora</span>
         </div>
         
-        <!-- Desktop Menu -->
-        <div class="hidden md:flex space-x-6 items-center">
-          <button onclick="nav('home')" class="hover:text-blue-400 transition">Articles</button>
-          <button onclick="nav('webinar')" class="hover:text-blue-400 transition">Webinars</button>
-          <button onclick="nav('quiz')" class="hover:text-blue-400 transition">Live Quiz</button>
-          <button onclick="nav('jobs')" class="hover:text-blue-400 transition">Jobs</button>
-          <button onclick="nav('about')" class="hover:text-blue-400 transition">About</button>
-          <button onclick="nav('contact')" class="hover:text-blue-400 transition">Contact</button>
+        <div class="hidden md:flex space-x-8 items-center text-sm font-semibold text-slate-600">
+          <button onclick="nav('home')" class="hover:text-blue-600 transition">Articles</button>
+          <button onclick="nav('webinar')" class="hover:text-blue-600 transition">Webinars</button>
+          <button onclick="nav('quiz')" class="hover:text-blue-600 transition">Live Quiz</button>
+          <button onclick="nav('jobs')" class="hover:text-blue-600 transition">Career</button>
           
-          <!-- Auth Section -->
-          <div id="auth-section" class="ml-4">
-            <!-- Google Login Button Container -->
-            <div id="g_id_onload" 
-                 data-client_id="356568812180-p3u8ttkv5nis5tv786mrf78aca83eib9.apps.googleusercontent.com" 
-                 data-callback="handleGoogleLogin">
-            </div>
-            <div class="g_id_signin" data-type="standard" data-theme="outline" data-size="large"></div>
+          <div id="desktop-auth" class="border-l pl-6 border-slate-200">
+            <button onclick="openAuthModal()" class="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 shadow-md transition">Sign In</button>
           </div>
-          
-          <div id="user-profile" class="hidden flex items-center gap-3 ml-4 bg-slate-800 py-1 px-3 rounded-full border border-slate-700">
-            <img id="user-avatar" src="" class="w-8 h-8 rounded-full">
-            <span id="user-name" class="text-sm font-semibold"></span>
-            <button onclick="logout()" class="text-red-400 hover:text-red-300 text-sm ml-2"><i class="fa-solid fa-right-from-bracket"></i></button>
+          <div id="desktop-profile" class="hidden border-l pl-6 border-slate-200 flex items-center gap-3">
+            <span id="role-badge" class="hidden bg-red-100 text-red-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Faculty</span>
+            <img id="user-avatar" src="" class="w-9 h-9 rounded-full border shadow-sm hidden">
+            <div class="flex flex-col text-left">
+              <span id="user-name" class="text-xs font-bold text-slate-900"></span>
+              <button onclick="logout()" class="text-[10px] text-slate-500 hover:text-red-600 text-left uppercase">Sign Out</button>
+            </div>
           </div>
         </div>
+
+        <div class="md:hidden flex items-center">
+          <button onclick="toggleMobileMenu()" class="text-slate-600 hover:text-slate-900 focus:outline-none p-2">
+            <i class="fa-solid fa-bars text-2xl" id="mobile-menu-icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="md:hidden bg-slate-50 border-b border-slate-200 px-4 pt-2 pb-4 space-y-2 shadow-inner">
+      <button onclick="nav('home'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-semibold text-slate-700 hover:bg-slate-200 rounded">Articles</button>
+      <button onclick="nav('webinar'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-semibold text-slate-700 hover:bg-slate-200 rounded">Webinars</button>
+      <button onclick="nav('quiz'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-semibold text-slate-700 hover:bg-slate-200 rounded">Live Quiz</button>
+      <button onclick="nav('jobs'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-semibold text-slate-700 hover:bg-slate-200 rounded">Career</button>
+      <div id="mobile-auth-btn" class="pt-2">
+        <button onclick="openAuthModal(); toggleMobileMenu()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow">Sign In / Register</button>
+      </div>
+      <div id="mobile-profile" class="hidden pt-2 border-t border-slate-200">
+        <div class="flex items-center gap-3 px-3 py-2"><span id="mobile-user-name" class="font-bold text-slate-900"></span></div>
+        <button onclick="logout(); toggleMobileMenu()" class="w-full text-left px-3 py-3 font-semibold text-red-600 hover:bg-red-50 rounded">Sign Out</button>
       </div>
     </div>
   </nav>
 
-  <!-- MAIN CONTENT AREA -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen">
+  <!-- AUTH MODAL -->
+  <div id="auth-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-[100] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="auth-modal-content">
+      <div class="flex border-b border-slate-200">
+        <button onclick="switchAuthTab('student')" id="tab-student" class="flex-1 py-4 font-bold text-sm text-blue-600 border-b-2 border-blue-600 bg-blue-50/50">Student Login</button>
+        <button onclick="switchAuthTab('faculty')" id="tab-faculty" class="flex-1 py-4 font-bold text-sm text-slate-500 border-b-2 border-transparent hover:text-slate-800 bg-slate-50">Faculty Access</button>
+      </div>
+      <div class="p-8">
+        <div id="auth-student-view">
+          <div class="text-center mb-6">
+            <h3 class="text-xl font-bold text-slate-900">Welcome to Vidhiora</h3>
+            <p class="text-sm text-slate-500 mt-2">Log in with your Google account.</p>
+          </div>
+          <div class="flex justify-center border border-slate-200 p-4 rounded-xl bg-slate-50">
+            <!-- PASTE YOUR GOOGLE CLIENT ID BELOW -->
+            <div id="g_id_onload" data-client_id="356568812180-p3u8ttkv5nis5tv786mrf78aca83eib9.apps.googleusercontent.com" data-callback="handleGoogleLogin"></div>
+            <div class="g_id_signin" data-type="standard" data-theme="outline" data-size="large" data-text="sign_in_with"></div>
+          </div>
+        </div>
+        <div id="auth-faculty-view" class="hidden">
+          <div class="text-center mb-6">
+            <h3 class="text-xl font-bold text-slate-900">Faculty Portal</h3>
+            <p class="text-sm text-slate-500 mt-2">Enter your designated access code.</p>
+          </div>
+          <div class="space-y-4">
+            <input type="password" id="faculty-code-input" placeholder="Enter Access Code" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-center tracking-widest font-mono">
+            <button onclick="handleFacultyLogin()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-lg shadow-md hover:bg-slate-800 transition">Authenticate</button>
+          </div>
+        </div>
+      </div>
+      <div class="bg-slate-50 p-4 border-t border-slate-100 text-center">
+        <button onclick="closeAuthModal()" class="text-sm font-semibold text-slate-500 hover:text-slate-800">Cancel</button>
+      </div>
+    </div>
+  </div>
 
-    <!-- PAGE: HOME (BLOG / ARTICLES) -->
+  <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
+
+    <!-- PAGE: HOME (ARTICLES, CASES, NOTES) -->
     <section id="home" class="page active">
-      <div class="text-center mb-12">
-        <h1 class="text-4xl font-extrabold text-slate-900 mb-4">Master the Law. Accelerate Your Career.</h1>
-        <p class="text-lg text-slate-600 max-w-2xl mx-auto">Vidhiora is your premium hub for legal news, professional study notes, and career opportunities.</p>
+      
+      <!-- Hero Banner -->
+      <div class="hero-bg rounded-3xl p-8 md:p-12 text-center md:text-left mb-10 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
+        <div class="max-w-2xl">
+          <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">Elite Legal Education.<br><span class="text-blue-400">Zero Boundaries.</span></h1>
+          <p class="text-lg text-slate-300 mb-8 font-light">Access landmark judgments, professional blogs, and curated study notes in one unified hub.</p>
+        </div>
       </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <!-- News Feed -->
-        <div>
-          <h2 class="text-2xl font-bold border-b-2 border-blue-500 pb-2 mb-6"><i class="fa-solid fa-newspaper mr-2"></i>Latest Articles</h2>
-          <div id="news-container" class="space-y-4"></div>
+      <!-- 3-Column Layout for Content -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Main Content Area (Cases & Blogs) -->
+        <div class="lg:col-span-8 space-y-10">
+          
+          <!-- Section 1: Updated Cases -->
+          <div class="space-y-4">
+            <div class="flex items-center gap-3 border-b-2 border-slate-800 pb-2 mb-4">
+              <i class="fa-solid fa-gavel text-2xl text-slate-800"></i>
+              <h2 class="text-2xl font-bold text-slate-900">Recent Landmark Cases</h2>
+            </div>
+            <div id="cases-container" class="space-y-4"></div>
+          </div>
+
+          <!-- Section 2: Legal Blog -->
+          <div class="space-y-4">
+            <div class="flex items-center gap-3 border-b-2 border-blue-600 pb-2 mb-4 mt-8">
+              <i class="fa-solid fa-pen-nib text-2xl text-blue-600"></i>
+              <h2 class="text-2xl font-bold text-slate-900">Legal Blog & Opinions</h2>
+            </div>
+            <div id="blogs-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+          </div>
+
         </div>
-        <!-- Study Notes -->
-        <div>
-          <h2 class="text-2xl font-bold border-b-2 border-amber-500 pb-2 mb-6"><i class="fa-solid fa-book-open mr-2"></i>Study Resources</h2>
-          <div id="notes-container" class="space-y-4"></div>
+
+        <!-- Sidebar Area (Study Notes) -->
+        <div class="lg:col-span-4 relative">
+          <div class="sticky top-28 space-y-4">
+            <div class="flex items-center gap-3 border-b-2 border-amber-500 pb-2 mb-4">
+              <i class="fa-solid fa-book-open text-2xl text-amber-500"></i>
+              <h2 class="text-2xl font-bold text-slate-900">Study Notes</h2>
+            </div>
+            <div id="notes-container" class="space-y-4 max-h-[70vh] overflow-y-auto pr-2 pb-4"></div>
+          </div>
         </div>
+        
       </div>
     </section>
 
-    <!-- PAGE: WEBINARS (Requires Login) -->
+    <!-- PAGE: WEBINARS -->
     <section id="webinar" class="page">
-      <h2 class="text-3xl font-bold mb-8 text-slate-800"><i class="fa-solid fa-video text-blue-600 mr-3"></i>Premium Webinars</h2>
-      <div id="webinar-lock" class="glass-card p-12 text-center rounded-xl shadow-sm">
-        <i class="fa-solid fa-lock text-5xl text-slate-400 mb-4"></i>
-        <h3 class="text-2xl font-bold mb-2">Authentication Required</h3>
-        <p class="text-slate-600 mb-6">Please log in with your Gmail account to access live interactive webinars.</p>
+      <div class="mb-8 md:text-center"><h2 class="text-3xl font-bold text-slate-900">Live Webinars</h2></div>
+      <div id="webinar-lock" class="glass-card p-10 text-center max-w-xl mx-auto">
+        <i class="fa-solid fa-lock text-5xl text-slate-300 mb-6"></i>
+        <h3 class="text-2xl font-bold text-slate-800 mb-2">Login Required</h3>
+        <button onclick="openAuthModal()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-full mt-4">Sign In Now</button>
       </div>
       <div id="webinar-content" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6"></div>
     </section>
 
-    <!-- PAGE: LIVE QUIZ (Requires Login) -->
+    <!-- PAGE: QUIZ -->
     <section id="quiz" class="page">
-      <h2 class="text-3xl font-bold mb-8 text-slate-800"><i class="fa-solid fa-trophy text-amber-500 mr-3"></i>Live Quiz Arena</h2>
-      <div id="quiz-lock" class="glass-card p-12 text-center rounded-xl shadow-sm">
-        <i class="fa-solid fa-lock text-5xl text-slate-400 mb-4"></i>
-        <h3 class="text-2xl font-bold mb-2">Authentication Required</h3>
-        <p class="text-slate-600">Please log in with Gmail to join the live quiz leaderboard.</p>
+      <div class="mb-8 md:text-center"><h2 class="text-3xl font-bold text-slate-900">Live Quiz Arena</h2></div>
+      <div id="quiz-lock" class="glass-card p-10 text-center max-w-xl mx-auto">
+        <i class="fa-solid fa-shield-halved text-5xl text-slate-300 mb-6"></i>
+        <h3 class="text-2xl font-bold text-slate-800 mb-2">Login Required</h3>
+        <button onclick="openAuthModal()" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-full mt-4">Sign In Now</button>
       </div>
-      
-      <div id="quiz-content" class="hidden grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div class="glass-card p-8 rounded-xl shadow-sm">
+      <div id="quiz-content" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 glass-card p-8 border-t-4 border-blue-600">
           <div id="question-card" class="hidden">
-            <h3 id="question-text" class="text-xl font-bold mb-4"></h3>
+            <h3 id="question-text" class="text-xl font-bold mb-6"></h3>
             <div id="options-container" class="space-y-3"></div>
           </div>
-          <div id="waiting-msg" class="text-center text-slate-500 py-10">
-            <i class="fa-solid fa-spinner fa-spin text-3xl mb-3"></i>
-            <p>Waiting for faculty to broadcast a question...</p>
-          </div>
+          <div id="waiting-msg" class="text-center py-12"><i class="fa-solid fa-circle-notch fa-spin text-4xl text-blue-500 mb-4"></i><h3 class="font-bold">Waiting for Question...</h3></div>
         </div>
-        <div class="glass-card p-8 rounded-xl shadow-sm bg-slate-900 text-white">
-          <h3 class="text-xl font-bold mb-4 border-b border-slate-700 pb-2">🏆 Live Leaderboard</h3>
-          <div id="leaderboard" class="space-y-3"></div>
+        <div class="glass-card p-6 bg-slate-900 text-white">
+          <h3 class="text-lg font-bold mb-4 border-b border-slate-700 pb-2 text-amber-400">Leaderboard</h3>
+          <div id="leaderboard" class="space-y-2"></div>
         </div>
       </div>
     </section>
 
     <!-- PAGE: JOBS -->
     <section id="jobs" class="page">
-      <h2 class="text-3xl font-bold mb-8 text-slate-800"><i class="fa-solid fa-briefcase text-green-600 mr-3"></i>Career Portal</h2>
+      <div class="mb-8"><h2 class="text-3xl font-bold text-slate-900">Career Portal</h2></div>
       <div id="jobs-container" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
     </section>
 
-    <!-- PAGE: ADMIN / FACULTY PANEL -->
+    <!-- PAGE: ADMIN DASHBOARD -->
     <section id="admin" class="page">
-      <div class="max-w-3xl mx-auto glass-card p-8 rounded-xl shadow-lg border-t-4 border-blue-600">
-        <h2 class="text-2xl font-bold mb-6"><i class="fa-solid fa-user-shield mr-2"></i>Admin & Faculty Dashboard</h2>
-        
-        <div class="mb-6">
-          <label class="block text-sm font-bold text-slate-700 mb-2">Enter Authorized Access Code</label>
-          <input type="password" id="access-code" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="e.g. FACULTY-2026 or ADMIN-MASTER-037">
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Post Content -->
-          <div class="bg-slate-50 p-6 rounded-lg border">
-            <h3 class="font-bold mb-4"><i class="fa-solid fa-upload mr-2"></i>Upload Content</h3>
-            <select id="upload-type" class="w-full p-2 mb-3 border rounded">
-              <option value="news">Article / News</option>
+      <div class="bg-slate-900 rounded-2xl p-8 mb-8 text-white shadow-lg">
+        <h2 class="text-2xl font-bold"><i class="fa-solid fa-server mr-3 text-blue-400"></i>Faculty Control Center</h2>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="glass-card p-6 md:p-8">
+          <h3 class="font-bold text-xl mb-6 border-b pb-2">Publish Content</h3>
+          <div class="space-y-4">
+            <select id="upload-type" class="w-full p-3 border rounded-lg bg-white">
+              <option value="cases">Legal Case Update</option>
+              <option value="blogs">Blog Article</option>
               <option value="notes">Study Note</option>
               <option value="jobs">Job Posting</option>
-              <option value="webinars">Webinar Link</option>
+              <option value="webinars">Webinar Event</option>
             </select>
-            <input type="text" id="upload-title" placeholder="Title" class="w-full p-2 mb-3 border rounded">
-            <textarea id="upload-desc" placeholder="Description / Summary / Link" class="w-full p-2 mb-3 border rounded"></textarea>
-            <button onclick="uploadContent()" class="w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700">Publish</button>
+            <input type="text" id="upload-title" placeholder="Document/Case Title" class="w-full p-3 border rounded-lg">
+            <input type="text" id="upload-meta" placeholder="Court / Author / Company / Speaker" class="w-full p-3 border rounded-lg bg-slate-50">
+            <textarea id="upload-desc" placeholder="Summary or Details..." rows="3" class="w-full p-3 border rounded-lg"></textarea>
+            <button onclick="uploadContent()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">Publish to Platform</button>
           </div>
+        </div>
 
-          <!-- Broadcast Quiz -->
-          <div class="bg-slate-50 p-6 rounded-lg border">
-            <h3 class="font-bold mb-4"><i class="fa-solid fa-tower-broadcast mr-2"></i>Broadcast Quiz</h3>
-            <input type="text" id="q-text" placeholder="Question" class="w-full p-2 mb-3 border rounded">
-            <input type="text" id="q-opt1" placeholder="Option 1" class="w-full p-2 mb-2 border rounded">
-            <input type="text" id="q-opt2" placeholder="Option 2" class="w-full p-2 mb-2 border rounded">
-            <input type="text" id="q-ans" placeholder="Exact Correct Answer" class="w-full p-2 mb-3 border rounded border-green-400">
-            <button onclick="broadcastQuiz()" class="w-full bg-amber-500 text-white font-bold py-2 rounded hover:bg-amber-600">Send Live</button>
+        <div class="glass-card p-6 md:p-8">
+          <h3 class="font-bold text-xl mb-6 border-b pb-2">Live Quiz Broadcast</h3>
+          <div class="space-y-4">
+            <input type="text" id="q-text" placeholder="Question Text" class="w-full p-3 border rounded-lg">
+            <input type="text" id="q-opt1" placeholder="Option A" class="w-full p-3 border rounded-lg">
+            <input type="text" id="q-opt2" placeholder="Option B" class="w-full p-3 border rounded-lg">
+            <input type="text" id="q-ans" placeholder="Correct Answer (Exact)" class="w-full p-3 border border-green-300 rounded-lg bg-green-50">
+            <button onclick="broadcastQuiz()" class="w-full bg-amber-500 text-white font-bold py-3 rounded-lg hover:bg-amber-600">Broadcast Now</button>
           </div>
         </div>
       </div>
     </section>
-
-    <!-- LEGAL PAGES -->
-    <section id="about" class="page max-w-4xl mx-auto glass-card p-8 rounded-xl shadow-sm">
-      <h2 class="text-3xl font-bold mb-4">About Vidhiora</h2>
-      <p class="text-slate-600 leading-relaxed mb-4">Vidhiora is a modern educational technology platform dedicated to bridging the gap between theoretical legal education and practical professional readiness. Founded with a vision to democratize elite legal knowledge.</p>
-    </section>
-
-    <section id="contact" class="page max-w-2xl mx-auto glass-card p-8 rounded-xl shadow-sm text-center">
-      <h2 class="text-3xl font-bold mb-4">Contact Us</h2>
-      <p class="text-slate-600 mb-6">Have questions or want to partner with us?</p>
-      <a href="mailto:support@vidhiora.com" class="inline-block bg-slate-900 text-white px-6 py-3 rounded-lg font-bold hover:bg-slate-800"><i class="fa-solid fa-envelope mr-2"></i>Email Support</a>
-    </section>
-
   </main>
 
   <!-- FOOTER -->
-  <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
-      <p>&copy; 2026 Vidhiora. All rights reserved.</p>
-      <div class="flex space-x-4 mt-4 md:mt-0">
-        <button onclick="nav('admin')" class="hover:text-white">Admin Login</button>
-        <button onclick="alert('Privacy Policy: We do not sell your data.')" class="hover:text-white">Privacy Policy</button>
-        <button onclick="alert('Terms: Use responsibly.')" class="hover:text-white">Terms of Service</button>
-      </div>
-    </div>
+  <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 text-center text-sm text-slate-500 font-medium"><p>&copy; 2026 Vidhiora. Crafted for Legal Excellence.</p></div>
   </footer>
 
   <script>
     const BACKEND_URL = "https://vidhiora-5m6s.onrender.com"; 
     const socket = io(BACKEND_URL);
-    let currentUser = null; // Stores Gmail user data
+    
+    let userRole = 'guest'; 
     let currentQuiz = null;
+    let facultyCodeUsed = '';
 
-    // --- NAVIGATION LOGIC ---
+    // -- NAV & AUTH UI LOGIC --
     function nav(pageId) {
+      if(pageId === 'admin' && userRole !== 'faculty') return openAuthModal('faculty');
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
       window.scrollTo(0,0);
     }
-
-    // --- GOOGLE AUTHENTICATION LOGIC ---
-    function parseJwt(token) {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      return JSON.parse(window.atob(base64));
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('open');
+    }
+    function openAuthModal(defaultTab = 'student') {
+      const modal = document.getElementById('auth-modal');
+      modal.classList.remove('hidden');
+      setTimeout(() => { modal.classList.remove('opacity-0'); document.getElementById('auth-modal-content').classList.remove('scale-95'); }, 10);
+      switchAuthTab(defaultTab);
+    }
+    function closeAuthModal() {
+      document.getElementById('auth-modal').classList.add('opacity-0');
+      document.getElementById('auth-modal-content').classList.add('scale-95');
+      setTimeout(() => document.getElementById('auth-modal').classList.add('hidden'), 300);
+    }
+    function switchAuthTab(tab) {
+      const viewS = document.getElementById('auth-student-view'); const viewF = document.getElementById('auth-faculty-view');
+      const btnS = document.getElementById('tab-student'); const btnF = document.getElementById('tab-faculty');
+      if(tab === 'student') {
+        btnS.className = "flex-1 py-4 font-bold text-sm text-blue-600 border-b-2 border-blue-600 bg-blue-50/50";
+        btnF.className = "flex-1 py-4 font-bold text-sm text-slate-500 border-b-2 border-transparent bg-slate-50";
+        viewS.classList.remove('hidden'); viewF.classList.add('hidden');
+      } else {
+        btnF.className = "flex-1 py-4 font-bold text-sm text-slate-900 border-b-2 border-slate-900 bg-slate-100/50";
+        btnS.className = "flex-1 py-4 font-bold text-sm text-slate-500 border-b-2 border-transparent bg-slate-50";
+        viewF.classList.remove('hidden'); viewS.classList.add('hidden');
+      }
     }
 
+    // -- LOGIN LOGIC --
+    function parseJwt(token) { return JSON.parse(window.atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))); }
     function handleGoogleLogin(response) {
       const data = parseJwt(response.credential);
-      currentUser = { name: data.name, email: data.email, picture: data.picture };
-      
-      // Update UI
-      document.getElementById('auth-section').style.display = 'none';
-      document.getElementById('user-profile').classList.remove('hidden');
-      document.getElementById('user-name').innerText = currentUser.name;
-      document.getElementById('user-avatar').src = currentUser.picture;
-
-      // Unlock Protected Pages
-      document.getElementById('webinar-lock').style.display = 'none';
-      document.getElementById('webinar-content').classList.remove('hidden');
-      document.getElementById('quiz-lock').style.display = 'none';
-      document.getElementById('quiz-content').classList.remove('hidden');
-      
-      alert(`Welcome, ${currentUser.name}!`);
+      userRole = 'student'; updateUI(data.name, data.picture); closeAuthModal();
     }
-
+    function handleFacultyLogin() {
+      const code = document.getElementById('faculty-code-input').value;
+      if(code === "FACULTY-2026" || code === "ADMIN-MASTER-037") {
+        userRole = 'faculty'; facultyCodeUsed = code;
+        updateUI("Faculty Admin", null); document.getElementById('role-badge').classList.remove('hidden');
+        closeAuthModal(); nav('admin');
+      } else alert("Invalid Access Code.");
+    }
+    function updateUI(name, imgUrl) {
+      document.getElementById('desktop-auth').classList.add('hidden'); document.getElementById('desktop-profile').classList.remove('hidden');
+      document.getElementById('user-name').innerText = name;
+      if(imgUrl) { document.getElementById('user-avatar').src = imgUrl; document.getElementById('user-avatar').classList.remove('hidden'); }
+      document.getElementById('mobile-auth-btn').classList.add('hidden'); document.getElementById('mobile-profile').classList.remove('hidden');
+      document.getElementById('mobile-user-name').innerText = name;
+      document.getElementById('webinar-lock').style.display = 'none'; document.getElementById('webinar-content').classList.remove('hidden');
+      document.getElementById('quiz-lock').style.display = 'none'; document.getElementById('quiz-content').classList.remove('hidden');
+    }
     function logout() {
-      currentUser = null;
-      document.getElementById('auth-section').style.display = 'block';
-      document.getElementById('user-profile').classList.add('hidden');
-      document.getElementById('webinar-lock').style.display = 'block';
-      document.getElementById('webinar-content').classList.add('hidden');
-      document.getElementById('quiz-lock').style.display = 'block';
-      document.getElementById('quiz-content').classList.add('hidden');
+      userRole = 'guest'; facultyCodeUsed = '';
+      document.getElementById('desktop-auth').classList.remove('hidden'); document.getElementById('desktop-profile').classList.add('hidden');
+      document.getElementById('role-badge').classList.add('hidden'); document.getElementById('user-avatar').classList.add('hidden');
+      document.getElementById('mobile-auth-btn').classList.remove('hidden'); document.getElementById('mobile-profile').classList.add('hidden');
+      document.getElementById('webinar-lock').style.display = 'block'; document.getElementById('webinar-content').classList.add('hidden');
+      document.getElementById('quiz-lock').style.display = 'block'; document.getElementById('quiz-content').classList.add('hidden');
       nav('home');
     }
 
-    // --- FETCH CONTENT ---
+    // -- FETCH & RENDER --
     async function loadData() {
       try {
-        const [news, notes, jobs, webinars] = await Promise.all([
-          fetch(`${BACKEND_URL}/api/news`).then(r=>r.json()),
+        const [cases, blogs, notes, jobs, webinars] = await Promise.all([
+          fetch(`${BACKEND_URL}/api/cases`).then(r=>r.json()),
+          fetch(`${BACKEND_URL}/api/blogs`).then(r=>r.json()),
           fetch(`${BACKEND_URL}/api/notes`).then(r=>r.json()),
           fetch(`${BACKEND_URL}/api/jobs`).then(r=>r.json()),
           fetch(`${BACKEND_URL}/api/webinars`).then(r=>r.json())
         ]);
 
-        document.getElementById('news-container').innerHTML = news.map(n => `
-          <div class="glass-card p-5 rounded-lg border-l-4 border-blue-500 hover:shadow-md transition">
-            <span class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded uppercase">${n.category}</span>
-            <h3 class="text-lg font-bold mt-2 text-slate-800">${n.title}</h3>
-            <p class="text-sm text-slate-600 mt-1">${n.summary}</p>
+        document.getElementById('cases-container').innerHTML = cases.map(c => `
+          <div class="glass-card p-5 border-l-4 border-slate-900">
+            <h3 class="text-xl font-bold text-slate-900 mb-1">${c.title}</h3>
+            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2"><i class="fa-solid fa-building-columns mr-1"></i> ${c.court}</p>
+            <p class="text-slate-600 text-sm">${c.summary}</p>
+          </div>`).join('');
+
+        document.getElementById('blogs-container').innerHTML = blogs.map(b => `
+          <div class="glass-card p-5">
+            <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded uppercase">Blog</span>
+            <h3 class="text-lg font-bold text-slate-900 mt-2 mb-1 line-clamp-2">${b.title}</h3>
+            <p class="text-xs text-slate-500 mb-2">By ${b.author}</p>
+            <p class="text-slate-600 text-sm line-clamp-3">${b.summary}</p>
           </div>`).join('');
 
         document.getElementById('notes-container').innerHTML = notes.map(n => `
-          <div class="glass-card p-5 rounded-lg border-l-4 border-amber-500 hover:shadow-md transition flex justify-between items-center">
+          <div class="glass-card p-4 border-l-4 border-amber-500 flex justify-between items-center cursor-pointer hover:bg-slate-50">
             <div>
-              <h3 class="font-bold text-slate-800">${n.title}</h3>
-              <p class="text-xs text-slate-500">By ${n.uploadedBy} | ${n.subject}</p>
+              <h3 class="font-bold text-slate-800 text-sm">${n.title}</h3>
+              <p class="text-xs text-slate-500 mt-1">${n.uploadedBy} | ${n.subject}</p>
             </div>
-            <button class="bg-slate-100 p-3 rounded-full hover:bg-amber-100 hover:text-amber-600 transition"><i class="fa-solid fa-download"></i></button>
+            <i class="fa-solid fa-download text-amber-500/50"></i>
           </div>`).join('');
 
         document.getElementById('jobs-container').innerHTML = jobs.map(j => `
-          <div class="glass-card p-6 rounded-xl border-t-4 border-green-500">
-            <h3 class="text-xl font-bold">${j.title}</h3>
-            <p class="text-slate-500 text-sm mb-3"><i class="fa-solid fa-building mr-1"></i>${j.company}</p>
-            <div class="flex justify-between items-center mb-4">
-              <span class="font-bold text-green-600">${j.salary}</span>
-              <span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded">${j.type}</span>
+          <div class="glass-card p-6 flex flex-col h-full">
+            <span class="inline-block bg-green-50 text-green-700 font-bold text-[10px] px-2 py-1 rounded mb-3 self-start uppercase">${j.type}</span>
+            <h3 class="text-lg font-bold text-slate-900 mb-1">${j.title}</h3>
+            <p class="text-slate-500 text-sm mb-4"><i class="fa-solid fa-building mr-1"></i>${j.company}</p>
+            <div class="mt-auto border-t border-slate-100 pt-4 flex justify-between items-center">
+              <span class="font-bold text-slate-800">${j.salary}</span><button class="text-blue-600 font-bold text-xs">Apply</button>
             </div>
-            <button class="w-full bg-slate-900 text-white py-2 rounded hover:bg-slate-800">Apply Now</button>
           </div>`).join('');
 
         document.getElementById('webinar-content').innerHTML = webinars.map(w => `
-          <div class="glass-card p-6 rounded-xl relative overflow-hidden">
-            <div class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg tracking-widest"><i class="fa-solid fa-circle text-[8px] mr-1 animate-pulse"></i>LIVE</div>
-            <h3 class="text-lg font-bold mt-2">${w.title}</h3>
-            <p class="text-slate-600 text-sm mt-2"><i class="fa-solid fa-microphone mr-2"></i>${w.speaker}</p>
-            <button class="mt-4 w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700"><i class="fa-solid fa-play mr-2"></i>Join Session</button>
+          <div class="glass-card overflow-hidden">
+            <div class="bg-slate-900 h-28 flex items-center justify-center relative"><i class="fa-brands fa-youtube text-4xl text-white/20"></i><div class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded"><span class="animate-pulse mr-1">●</span>LIVE</div></div>
+            <div class="p-5"><h3 class="font-bold text-slate-900 mb-1">${w.title}</h3><p class="text-slate-500 text-xs mb-4">${w.speaker}</p><button class="w-full bg-slate-100 text-blue-600 font-bold py-2 rounded text-sm hover:bg-blue-50">Join Session</button></div>
           </div>`).join('');
-
-      } catch (err) { console.log("Backend sync issue."); }
+      } catch (err) { console.log("Backend offline."); }
     }
     loadData();
 
-    // --- ADMIN / FACULTY UPLOADS ---
+    // -- FACULTY ACTIONS --
     async function uploadContent() {
-      const code = document.getElementById('access-code').value;
+      if (userRole !== 'faculty') return alert("Unauthorized");
       const type = document.getElementById('upload-type').value;
       const title = document.getElementById('upload-title').value;
+      const meta = document.getElementById('upload-meta').value;
       const desc = document.getElementById('upload-desc').value;
-
-      if (!code || !title || !desc) return alert("Fill all fields and enter Access Code.");
+      if (!title || !desc || !meta) return alert("Fill all fields.");
 
       let data = { title: title };
-      if (type === 'news') { data.summary = desc; data.category = "Update"; }
-      else if (type === 'notes') { data.uploadedBy = "Faculty"; data.subject = desc; }
-      else if (type === 'jobs') { data.company = "New Firm"; data.salary = desc; data.type = "Full-Time"; }
-      else if (type === 'webinars') { data.speaker = desc; data.date = "Upcoming"; }
+      if (type === 'cases') { data.summary = desc; data.court = meta; }
+      else if (type === 'blogs') { data.summary = desc; data.author = meta; }
+      else if (type === 'notes') { data.uploadedBy = meta; data.subject = desc; }
+      else if (type === 'jobs') { data.company = meta; data.salary = desc; data.type = "Full-Time"; }
+      else if (type === 'webinars') { data.speaker = meta; data.date = desc; }
 
-      const res = await fetch(`${BACKEND_URL}/api/upload`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, data, code })
-      });
-
-      if (res.ok) { alert("Published!"); loadData(); } 
-      else { alert("Unauthorized Access Code."); }
+      const res = await fetch(`${BACKEND_URL}/api/upload`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type, data, code: facultyCodeUsed }) });
+      if (res.ok) { alert("Published."); document.getElementById('upload-title').value = ''; document.getElementById('upload-meta').value = ''; document.getElementById('upload-desc').value = ''; loadData(); }
+      else alert("Server Error.");
     }
 
-    // --- LIVE QUIZ LOGIC ---
     function broadcastQuiz() {
-      const code = document.getElementById('access-code').value;
-      const q = document.getElementById('q-text').value;
-      const o1 = document.getElementById('q-opt1').value;
-      const o2 = document.getElementById('q-opt2').value;
-      const ans = document.getElementById('q-ans').value;
-
-      if (!code || !q || !o1 || !o2 || !ans) return alert("Fill quiz fields & Code");
-
-      socket.emit('faculty_start_quiz', {
-        code: code,
-        questionData: { question: q, options: [o1, o2], correctAnswer: ans }
-      });
-      alert("Broadcasted Live!");
+      if (userRole !== 'faculty') return;
+      const q = document.getElementById('q-text').value, o1 = document.getElementById('q-opt1').value, o2 = document.getElementById('q-opt2').value, ans = document.getElementById('q-ans').value;
+      if (!q || !o1 || !o2 || !ans) return alert("Fill all fields.");
+      socket.emit('faculty_start_quiz', { code: facultyCodeUsed, questionData: { question: q, options: [o1, o2], correctAnswer: ans } });
+      alert("Broadcast Sent."); document.getElementById('q-text').value = ''; document.getElementById('q-opt1').value = ''; document.getElementById('q-opt2').value = ''; document.getElementById('q-ans').value = '';
     }
 
+    // -- QUIZ SOCKET --
     socket.on('student_receive_question', (q) => {
-      currentQuiz = q;
-      document.getElementById('waiting-msg').style.display = 'none';
-      document.getElementById('question-card').style.display = 'block';
-      document.getElementById('question-text').innerText = q.question;
-      document.getElementById('options-container').innerHTML = q.options.map(opt => 
-        `<button class="w-full text-left p-4 border border-slate-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 font-medium transition" onclick="submitAnswer('${opt}')">${opt}</button>`
-      ).join('');
+      currentQuiz = q; document.getElementById('waiting-msg').style.display = 'none'; document.getElementById('question-card').style.display = 'block'; document.getElementById('question-text').innerText = q.question;
+      document.getElementById('options-container').innerHTML = q.options.map(opt => `<button class="w-full text-left p-4 border rounded hover:bg-blue-50 font-semibold" onclick="submitAnswer('${opt}')">${opt}</button>`).join('');
     });
-
     socket.on('update_leaderboard', (list) => {
-      document.getElementById('leaderboard').innerHTML = list.map((u, i) => `
-        <div class="flex justify-between items-center py-2 border-b border-slate-700 last:border-0">
-          <span class="font-medium"><span class="text-amber-500 mr-2">#${i+1}</span>${u.name}</span>
-          <span class="font-bold text-blue-400">${u.score} pts</span>
-        </div>`).join('');
+      document.getElementById('leaderboard').innerHTML = list.map((u, i) => `<div class="flex justify-between py-2"><span class="text-sm"><span class="text-amber-400 font-bold mr-2">#${i+1}</span>${u.name}</span><span class="font-bold text-blue-400 text-sm">${u.score}</span></div>`).join('');
     });
-
     function submitAnswer(opt) {
-      if (!currentUser) return alert("You must be logged in via Gmail!");
-      const points = opt === currentQuiz.correctAnswer ? 10 : 0;
-      
-      socket.emit('student_submit_answer', { 
-        email: currentUser.email, 
-        name: currentUser.name, 
-        points: points 
-      });
-      
-      document.getElementById('question-card').style.display = 'none';
-      document.getElementById('waiting-msg').innerHTML = "<i class='fa-solid fa-check-circle text-green-500 text-3xl mb-3'></i><p>Answer Submitted! Awaiting next question...</p>";
-      document.getElementById('waiting-msg').style.display = 'block';
+      if (userRole !== 'student') return;
+      socket.emit('student_submit_answer', { email: currentUser.email, name: currentUser.name, points: opt === currentQuiz.correctAnswer ? 10 : 0 });
+      document.getElementById('question-card').style.display = 'none'; document.getElementById('waiting-msg').innerHTML = "<i class='fa-solid fa-circle-check text-green-500 text-4xl mb-3'></i><h3 class='font-bold'>Answer Submitted</h3>"; document.getElementById('waiting-msg').style.display = 'block';
     }
   </script>
 </body>
