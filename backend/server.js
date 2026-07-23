@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*", methods: ["GET", "POST"] } });
+const io = new Server(server, { cors: { origin: "*", methods: ["GET", "POST", "DELETE"] } });
 
 app.get('/', (req, res) => res.send('Vidhiora Pro API is Live!'));
 
@@ -36,6 +36,7 @@ app.get('/api/:type', (req, res) => {
   else res.status(404).json({ error: "Not found" });
 });
 
+// Upload Endpoint
 app.post('/api/upload', (req, res) => {
   const { type, data, code } = req.body;
   if (!validFacultyCodes.includes(code)) return res.status(403).json({ error: "Unauthorized Code" });
@@ -45,6 +46,29 @@ app.post('/api/upload', (req, res) => {
     res.status(201).json({ message: "Content uploaded successfully!" });
   } else {
     res.status(400).json({ error: "Invalid content type" });
+  }
+});
+
+// Delete Endpoint
+app.delete('/api/delete/:type/:id', (req, res) => {
+  const { type, id } = req.params;
+  const { code } = req.body;
+
+  if (!validFacultyCodes.includes(code)) {
+    return res.status(403).json({ error: "Unauthorized Code" });
+  }
+
+  if (content[type]) {
+    const initialLength = content[type].length;
+    content[type] = content[type].filter(item => item.id !== parseInt(id));
+
+    if (content[type].length < initialLength) {
+      return res.json({ message: "Content deleted successfully!" });
+    } else {
+      return res.status(404).json({ error: "Item not found" });
+    }
+  } else {
+    return res.status(400).json({ error: "Invalid content type" });
   }
 });
 
