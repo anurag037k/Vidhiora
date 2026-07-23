@@ -237,10 +237,23 @@
             </span>
           </div>
           
-          <!-- Video Container (Replace src with your actual stream URL) -->
-          <div class="aspect-video bg-black relative flex items-center justify-center group">
-            <iframe class="w-full h-full absolute inset-0" src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=0&mute=1" title="Live Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
+          <!-- Video Container (Replaced with Google Meet Portal) -->
+<div class="aspect-video bg-slate-900 relative flex flex-col items-center justify-center group p-6 text-center border-b border-slate-800">
+  
+  <!-- Google Meet Icon -->
+  <div class="h-20 w-20 bg-white rounded-full flex items-center justify-center mb-4 shadow-lg shadow-blue-900/20">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Google_Meet_icon_%282020%29.svg/512px-Google_Meet_icon_%282020%29.svg.png" alt="Google Meet" class="h-10 w-10">
+  </div>
+  
+  <h3 class="text-2xl font-serif font-bold text-white mb-2">Class is Live on Google Meet</h3>
+  <p class="text-slate-400 mb-6 max-w-md">Click below to join the interactive session. Please keep your microphone muted upon entry.</p>
+  
+  <!-- REPLACE THE HREF LINK BELOW WITH YOUR ACTUAL GOOGLE MEET LINK -->
+  <a href="https://meet.google.com/YOUR-MEETING-LINK" target="_blank" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-full transition shadow-lg shadow-blue-600/30 flex items-center gap-2">
+    <i class="fa-solid fa-video"></i> Join Live Meeting
+  </a>
+
+</div>
           
           <!-- Player Footer & Actions -->
           <div class="p-6 md:p-8 bg-white flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
