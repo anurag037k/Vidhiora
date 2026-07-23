@@ -4,11 +4,17 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 
 const app = express();
+// Enable CORS for all routes so your frontend can connect
 app.use(cors());
 app.use(express.json());
 
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*", methods: ["GET", "POST", "DELETE"] } });
+const io = new Server(server, { 
+  cors: { 
+    origin: "*", 
+    methods: ["GET", "POST", "DELETE"] 
+  } 
+});
 
 app.get('/', (req, res) => res.send('Vidhiora Pro API is Live!'));
 
@@ -30,13 +36,15 @@ let validFacultyCodes = [FACULTY_SECRET, ADMIN_SECRET];
 let leaderboard = {};
 
 // --- REST API ENDPOINTS ---
+
+// Fetch Content
 app.get('/api/:type', (req, res) => {
   const type = req.params.type;
   if (content[type]) res.json(content[type]);
   else res.status(404).json({ error: "Not found" });
 });
 
-// Upload Endpoint
+// Upload Content Endpoint
 app.post('/api/upload', (req, res) => {
   const { type, data, code } = req.body;
   if (!validFacultyCodes.includes(code)) return res.status(403).json({ error: "Unauthorized Code" });
@@ -49,7 +57,7 @@ app.post('/api/upload', (req, res) => {
   }
 });
 
-// Delete Endpoint
+// Delete Content Endpoint
 app.delete('/api/delete/:type/:id', (req, res) => {
   const { type, id } = req.params;
   const { code } = req.body;
@@ -82,30 +90,17 @@ io.on('connection', (socket) => {
 
   socket.on('student_submit_answer', (data) => {
     const { email, name, points } = data; 
-    if (!leaderboard[email]) leaderboard[email] = { name, score: 0 };
-    leaderboard[email].score += points;
+    
+    // Prevent crash if email is somehow missing
+    const userKey = email || name || socket.id;
+
+    if (!leaderboard[userKey]) leaderboard[userKey] = { name: name || "Anonymous", score: 0 };
+    leaderboard[userKey].score += points;
 
     const sorted = Object.values(leaderboard).sort((a, b) => b.score - a.score);
     io.emit('update_leaderboard', sorted);
   });
 });
-function showToast(message, type = 'success') {
-  const toast = document.getElementById('toast-notification');
-  const msg = document.getElementById('toast-message');
-  const icon = document.getElementById('toast-icon');
 
-  msg.innerText = message;
-  if(type === 'success') {
-    icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
-  } else {
-    icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-rose-400"></i>';
-  }
-
-  toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
-  
-  setTimeout(() => {
-    toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
-  }, 3500);
-}
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Vidhiora Backend active on port ${PORT}`));
