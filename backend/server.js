@@ -4,13 +4,11 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 
 const app = express();
-// Enable CORS for REST routes
 app.use(cors());
 app.use(express.json());
 
 const server = http.createServer(app);
 
-// Initialize Socket.IO with broad CORS settings
 const io = new Server(server, { 
   cors: { 
     origin: "*", 
@@ -31,24 +29,46 @@ let content = {
   qa: [{ id: 1, title: "How do I participate in the Live Quiz?", meta: "System FAQ", summary: "You must be logged in using your Google Account. Navigate to the Live Quiz tab and wait for a faculty member to broadcast a question." }]
 };
 
-// Security Codes
+// Store Job Applications
+let applications = [];
+
 const FACULTY_SECRET = process.env.FACULTY_CODE || "FACULTY-2026";
 const ADMIN_SECRET = process.env.ADMIN_CODE || "ADMIN-MASTER-037";
 let validFacultyCodes = [FACULTY_SECRET, ADMIN_SECRET];
 
-// Live Quiz Leaderboard State
 let leaderboard = {};
 
 // --- REST API ENDPOINTS ---
 
-// Fetch Content
 app.get('/api/:type', (req, res) => {
   const type = req.params.type;
   if (content[type]) res.json(content[type]);
   else res.status(404).json({ error: "Not found" });
 });
 
-// Upload Content Endpoint (Supports fileUrl for PDFs automatically)
+// JOB APPLICATION SUBMISSION ENDPOINT
+app.post('/api/apply-job', (req, res) => {
+  const { jobTitle, company, applicantName, applicantEmail, resumeUrl, coverNote } = req.body;
+  if (!applicantName || !applicantEmail || !resumeUrl) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  const appRecord = {
+    id: Date.now(),
+    jobTitle,
+    company,
+    applicantName,
+    applicantEmail,
+    resumeUrl,
+    coverNote,
+    date: new Date().toISOString()
+  };
+
+  applications.unshift(appRecord);
+  console.log(`[Job Application Received] ${applicantName} applied for ${jobTitle} at ${company}`);
+  res.status(201).json({ message: "Application submitted successfully!", application: appRecord });
+});
+
 app.post('/api/upload', (req, res) => {
   const { type, data, code } = req.body;
   if (!validFacultyCodes.includes(code)) return res.status(403).json({ error: "Unauthorized Code" });
@@ -61,7 +81,6 @@ app.post('/api/upload', (req, res) => {
   }
 });
 
-// Delete Content Endpoint
 app.delete('/api/delete/:type/:id', (req, res) => {
   const { type, id } = req.params;
   const { code } = req.body;
@@ -84,25 +103,19 @@ app.delete('/api/delete/:type/:id', (req, res) => {
   }
 });
 
-// --- SOCKET.IO (LIVE QUIZ REALTIME SYSTEM) ---
+// --- SOCKET.IO ---
 io.on('connection', (socket) => {
   console.log(`[Socket.io] Client connected: ${socket.id}`);
 
-  // Broadcast quiz question from Faculty
   socket.on('faculty_start_quiz', (data) => {
     if (validFacultyCodes.includes(data.code)) {
       console.log(`[Quiz] Question broadcasted: "${data.questionData.question}"`);
       io.emit('student_receive_question', data.questionData);
-    } else {
-      console.log(`[Quiz Error] Unauthorized attempt to start quiz.`);
     }
   });
 
-  // Handle Answer Submission from Student
   socket.on('student_submit_answer', (data) => {
     const { email, name, points } = data || {}; 
-    
-    // Fallback key creation if email/name are missing
     const userKey = email || name || socket.id;
     const displayName = name || email || "Anonymous Student";
     const earnedPoints = typeof points === 'number' ? points : 0;
@@ -112,14 +125,11 @@ io.on('connection', (socket) => {
     }
     
     leaderboard[userKey].score += earnedPoints;
-    console.log(`[Quiz Submission] ${displayName} (+${earnedPoints} pts). Total: ${leaderboard[userKey].score}`);
 
-    // Sort leaderboard in descending order by score
-    const sortedLeaderboard = Object.values(leaderboard).sort((a, b) => b.score - a.score);
     
-    // Broadcast updated leaderboard to all connected clients
-    io.emit('update_leaderboard', sortedLeaderboard);
-  });
+    const sortedLeaderboard = Object.values(leaderboard).sort((a, b) => b.score - a.score);
+     io.emit('update_leaderboard', sortedLeaderboard);
+   });
 
   socket.on('disconnect', () => {
     console.log(`[Socket.io] Client disconnected: ${socket.id}`);

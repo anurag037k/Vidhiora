@@ -22,13 +22,11 @@
     .glass-card { background: #ffffff; border-radius: 12px; box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid rgba(226, 232, 240, 0.8); }
     .glass-card:hover { box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1); transform: translateY(-3px); }
     
-    /* Navy & Gold Theme */
     .btn-gold { background: linear-gradient(135deg, #d4af37, #aa8222); color: white; transition: all 0.3s ease; }
     .btn-gold:hover { background: linear-gradient(135deg, #b5952f, #8e6c1c); transform: translateY(-1px); }
     .text-gold { color: #d4af37; }
     .bg-navy { background-color: #0f172a; }
     
-    /* Custom Image Banner */
     .hero-image-banner {
       background-image: url('vidhiora-banner.jpeg');
       background-size: cover;
@@ -47,7 +45,6 @@
     #mobile-menu { transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
     #mobile-menu.open { max-height: 500px; opacity: 1; }
     
-    /* Visible scrollbar for mobile menu */
     #mobile-menu::-webkit-scrollbar { width: 6px; }
     #mobile-menu::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
     #mobile-menu::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
@@ -109,7 +106,6 @@
       <button onclick="nav('qa')" class="block w-full text-left px-4 py-2 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg text-sm">Q&A</button>
       <button onclick="nav('jobs')" class="block w-full text-left px-4 py-2 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg text-sm">Career</button>
       
-      <!-- Action Section at Bottom -->
       <div id="mobile-auth-btn" class="pt-2 pb-2 border-t border-slate-100">
         <button onclick="openAuthModal()" class="w-full btn-gold font-bold py-2.5 rounded-xl shadow-md text-slate-900 text-sm">Sign In</button>
       </div>
@@ -162,6 +158,40 @@
     </div>
   </div>
 
+  <!-- JOB APPLICATION MODAL -->
+  <div id="job-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md hidden z-[200] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 transform scale-95 transition-transform duration-300" id="job-modal-content">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+        <div>
+          <h3 id="job-modal-title" class="font-serif font-bold text-xl text-slate-900">Apply for Position</h3>
+          <p id="job-modal-company" class="text-xs text-amber-600 font-bold mt-0.5"></p>
+        </div>
+        <button onclick="closeJobModal()" class="text-slate-400 hover:text-slate-800 text-lg p-1"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="submitJobApplication(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Full Name</label>
+          <input type="text" id="app-name" required placeholder="John Doe" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Email Address</label>
+          <input type="email" id="app-email" required placeholder="john@example.com" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Resume / Portfolio Link (Drive / LinkedIn)</label>
+          <input type="url" id="app-resume" required placeholder="https://drive.google.com/your-resume.pdf" class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Cover Note / Message</label>
+          <textarea id="app-note" rows="3" placeholder="Briefly introduce yourself..." class="w-full p-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+        </div>
+        <button type="submit" id="job-submit-btn" class="w-full btn-gold text-slate-900 font-bold py-3.5 rounded-xl shadow-lg flex items-center justify-center gap-2">
+          <i class="fa-solid fa-paper-plane"></i> Submit Application
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- LIVE ANNOUNCEMENT TICKER -->
   <div class="bg-navy text-white text-sm py-2 px-4 shadow-md flex items-center border-b-2 border-[#d4af37]">
     <span class="font-bold text-[#d4af37] whitespace-nowrap mr-4 px-2 py-0.5 bg-white/10 rounded"><i class="fa-solid fa-bullhorn mr-2"></i>UPDATES</span>
@@ -177,22 +207,15 @@
     <!-- PAGE 1: HOME -->
     <section id="home" class="page active">
       <div class="hero-image-banner mb-10 w-full flex flex-col items-center justify-end text-center p-8 text-white rounded-3xl min-h-[420px] bg-cover bg-center">
-        
-        <!-- Heading / Title -->
         <h1 class="text-3xl md:text-5xl font-serif font-bold mb-3 drop-shadow-md">
           Welcome to Vidhiora
         </h1>
-        
-        <!-- Subtitle or Description -->
         <p class="text-sm md:text-base text-slate-200 max-w-xl mb-6 drop-shadow-sm font-medium">
           Empowering your legal journey with landmark cases, interactive live quizzes, study notes, and webinars.
         </p>
-
-        <!-- Explore Button -->
         <button onclick="nav('webinar')" class="bg-white/10 backdrop-blur-md border border-white/30 text-white hover:bg-white hover:text-slate-900 px-8 py-3 rounded-full font-bold shadow-2xl transition duration-300">
           Explore Platform <i class="fa-solid fa-arrow-right ml-2"></i>
         </button>
-
       </div>
       
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -347,7 +370,6 @@
         <h2 class="text-4xl font-serif font-bold text-slate-900 mt-2">Live Quiz Arena</h2>
       </div>
 
-      <!-- Quiz Locked State (When Logged Out) -->
       <div id="quiz-lock" class="glass-card p-12 text-center max-w-xl mx-auto border-t-4 border-t-blue-500">
         <i class="fa-solid fa-shield-halved text-5xl text-slate-300 mb-6"></i>
         <h3 class="text-2xl font-serif font-bold text-slate-800 mb-3">Identify Yourself</h3>
@@ -355,26 +377,20 @@
         <button onclick="openAuthModal()" class="btn-gold text-slate-900 px-8 py-3 rounded-full font-bold shadow-md">Sign In to Play</button>
       </div>
 
-      <!-- Quiz Unlocked State (When Logged In) -->
       <div id="quiz-content" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2 glass-card p-8 md:p-12 border-t-4 border-blue-500 bg-white">
-          
-          <!-- Question Container -->
           <div id="question-card" class="hidden">
             <h3 id="question-text" class="text-2xl font-bold text-slate-800 mb-8"></h3>
             <div id="options-container" class="space-y-4"></div>
           </div>
           
-          <!-- Waiting Message -->
           <div id="waiting-msg" class="text-center py-16">
             <i class="fa-solid fa-circle-notch fa-spin text-5xl text-blue-500 mb-6"></i>
             <h3 class="font-serif text-2xl font-bold text-slate-800">Awaiting Broadcast...</h3>
             <p class="text-slate-500 text-sm mt-2">Stay tuned! Questions will appear here automatically when broadcast by a faculty member.</p>
           </div>
-
         </div>
 
-        <!-- Leaderboard -->
         <div class="glass-card p-8 bg-navy text-white">
           <h3 class="text-xl font-serif font-bold mb-6 border-b border-slate-700 pb-4 text-amber-400">
             <i class="fa-solid fa-ranking-star mr-2"></i> Leaderboard
@@ -395,7 +411,6 @@
       </div>
 
       <div class="max-w-3xl mx-auto glass-card p-4 md:p-6 border-t-4 border-amber-500 bg-white">
-        <!-- TYPEFORM EMBED CONTAINER -->
         <div data-tf-live="01KY9JQ8SFVHRWY2MVQAWVX2PG" style="width: 100%; height: 500px;"></div>
         <script src="//embed.typeform.com/next/embed.js"></script>
       </div>
@@ -404,7 +419,8 @@
     <!-- PAGE 8: JOBS -->
     <section id="jobs" class="page">
       <div class="mb-10 md:text-center border-b border-slate-200 pb-6">
-        <h2 class="text-4xl font-serif font-bold text-slate-900 mt-2">Career Portal</h2>
+        <span class="text-emerald-600 font-bold uppercase tracking-widest text-xs">Opportunity Hub</span>
+        <h2 class="text-4xl font-serif font-bold text-slate-900 mt-2">Career & Internship Portal</h2>
       </div>
       <div id="jobs-container" class="grid grid-cols-1 md:grid-cols-3 gap-8"></div>
     </section>
@@ -436,7 +452,7 @@
           </div>
         </div>
 
-<!-- Live Quiz Admin Panel -->
+        <!-- 4-OPTION LIVE QUIZ ADMIN PANEL -->
         <div class="glass-card p-8 border-t-4 border-t-amber-500 bg-white">
           <h3 class="font-serif font-bold text-2xl mb-6 text-slate-800"><i class="fa-solid fa-tower-broadcast text-amber-500 mr-2"></i> Live Quiz</h3>
           <div class="space-y-4">
@@ -451,6 +467,7 @@
             <button onclick="broadcastQuiz()" class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl mt-2 hover:bg-slate-800">Broadcast Now</button>
           </div>
         </div>
+      </div>
 
       <div class="glass-card p-8 bg-white border-t-4 border-t-rose-500">
         <h3 class="font-serif font-bold text-2xl mb-6 text-slate-800 flex items-center justify-between">
@@ -481,7 +498,7 @@
   </footer>
 
   <!-- TOAST CONTAINER -->
-  <div id="toast-notification" class="fixed bottom-6 right-6 z-[200] transform translate-y-20 opacity-0 transition-all duration-300 ease-in-out pointer-events-none" role="status" aria-live="polite">
+  <div id="toast-notification" class="fixed bottom-6 right-6 z-[300] transform translate-y-20 opacity-0 transition-all duration-300 ease-in-out pointer-events-none" role="status" aria-live="polite">
     <div class="bg-slate-900 text-white px-6 py-4 rounded-xl shadow-2xl border border-slate-800 flex items-center gap-3">
       <div id="toast-icon" class="text-amber-400 text-lg">
         <i class="fa-solid fa-circle-check"></i>
@@ -511,6 +528,7 @@
     const BACKEND_URL = "https://vidhiora-5m6s.onrender.com"; 
     const socket = io(BACKEND_URL);
     let userRole = 'guest', currentQuiz = null, facultyCodeUsed = '', currentUser = null;
+    let selectedJobTitle = '', selectedJobCompany = '';
     
     let pendingDeleteType = null;
     let pendingDeleteId = null;
@@ -549,13 +567,81 @@
       window.open(url, '_blank');
     }
 
+    /* JOB APPLY MODAL HANDLERS */
+    function openJobModal(title, company) {
+      selectedJobTitle = title;
+      selectedJobCompany = company;
+      
+      document.getElementById('job-modal-title').innerText = title;
+      document.getElementById('job-modal-company').innerText = company;
+
+      if (currentUser) {
+        if (currentUser.name) document.getElementById('app-name').value = currentUser.name;
+        if (currentUser.email) document.getElementById('app-email').value = currentUser.email;
+      }
+
+      const modal = document.getElementById('job-modal');
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        document.getElementById('job-modal-content').classList.remove('scale-95');
+      }, 10);
+    }
+
+    function closeJobModal() {
+      const modal = document.getElementById('job-modal');
+      modal.classList.add('opacity-0');
+      document.getElementById('job-modal-content').classList.add('scale-95');
+      setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+
+    async function submitJobApplication(event) {
+      event.preventDefault();
+      
+      const btn = document.getElementById('job-submit-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+
+      const name = document.getElementById('app-name').value;
+      const email = document.getElementById('app-email').value;
+      const resume = document.getElementById('app-resume').value;
+      const note = document.getElementById('app-note').value;
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/apply-job`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jobTitle: selectedJobTitle,
+            company: selectedJobCompany,
+            applicantName: name,
+            applicantEmail: email,
+            resumeUrl: resume,
+            coverNote: note
+          })
+        });
+
+        if (res.ok) {
+          showToast(`Application submitted for ${selectedJobTitle}!`, "success");
+          closeJobModal();
+          document.getElementById('app-resume').value = '';
+          document.getElementById('app-note').value = '';
+        } else {
+          showToast("Failed to submit application. Try again.", "error");
+        }
+      } catch (err) {
+        showToast("Network error. Please try again.", "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Application';
+      }
+    }
+
     function nav(pageId) {
       if (pageId === 'admin' && userRole !== 'faculty') return openAuthModal('faculty');
 
-      // Hide all pages
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 
-      // Activate target page
       const activePage = document.getElementById(pageId);
       if (activePage) {
         activePage.classList.add('active');
@@ -563,9 +649,7 @@
         console.error(`Page with ID "${pageId}" not found.`);
       }
 
-      // Close mobile menu
       closeMobileMenu();
-
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -660,15 +744,6 @@
       document.getElementById('quiz-lock').style.display = 'none'; document.getElementById('quiz-content').classList.remove('hidden');
     }
 
-    function handleMobileProfileClick() {
-      if (userRole === 'faculty') {
-        nav('admin');
-      } else {
-        const name = (currentUser && currentUser.name) ? currentUser.name : 'Student';
-        showToast(`Logged in as ${name}`, 'success');
-      }
-    }
-
     function logout() {
       userRole = 'guest'; 
       facultyCodeUsed = '';
@@ -698,19 +773,16 @@
         document.getElementById('qa-container').innerHTML = qa.map(q => `<div class="glass-card p-6 border-l-4 border-navy relative">
           <h3 class="text-xl font-bold text-slate-900 mb-2">Q: ${q.title}</h3><div class="text-xs bg-slate-100 inline-block px-2 py-1 rounded text-slate-500 mb-3">${q.meta}</div><p class="text-slate-700 bg-slate-50 p-4 rounded-lg border border-slate-100"><strong>Answer:</strong> ${q.summary}</p></div>`).join('');
 
-        // Populate Landmark Cases
         const casesHTML = cases.map(c => `<div class="glass-card p-6 border-l-4 border-l-slate-800 relative">
           <h3 class="text-xl font-serif font-bold text-slate-900 mb-2">${c.title}</h3><p class="text-[11px] font-bold text-slate-600 bg-slate-100 inline-block px-2 py-1 rounded uppercase mb-2"><i class="fa-solid fa-building-columns mr-1"></i> ${c.court}</p><p class="text-slate-600 text-sm">${c.summary}</p></div>`).join('');
         document.getElementById('cases-container-preview').innerHTML = casesHTML;
         document.getElementById('cases-container').innerHTML = casesHTML;
         
-        // Populate Articles & Blogs
         const blogsHTML = blogs.map(b => `<div class="glass-card p-5 border-t-4 border-t-blue-800 flex flex-col h-full relative">
           <span class="bg-blue-50 text-blue-800 text-[10px] font-bold px-2 py-1 rounded uppercase self-start">Article</span><h3 class="text-lg font-serif font-bold text-slate-900 mt-3 mb-1 line-clamp-2">${b.title}</h3><p class="text-xs text-slate-400 mb-3">By <span class="text-slate-700">${b.author}</span></p><p class="text-slate-600 text-sm line-clamp-3 mt-auto">${b.summary}</p></div>`).join('');
         document.getElementById('blogs-container-preview').innerHTML = blogsHTML;
         document.getElementById('blogs-container').innerHTML = blogsHTML;
         
-        // Populate Study Notes with Functional Download Handlers
         const notesHTML = notes.map(n => {
           const fileUrl = n.fileUrl || n.summary || '#';
           return `
@@ -729,8 +801,20 @@
         document.getElementById('notes-container-preview').innerHTML = notesHTML;
         document.getElementById('notes-container').innerHTML = notesHTML;
         
-        document.getElementById('jobs-container').innerHTML = jobs.map(j => `<div class="glass-card p-6 flex flex-col h-full border-t-4 border-t-emerald-500 relative">
-          <span class="bg-emerald-50 text-emerald-700 font-bold text-[10px] px-2 py-1 rounded self-start uppercase">${j.type}</span><h3 class="text-xl font-serif font-bold text-slate-900 mb-1 mt-3">${j.title}</h3><p class="text-slate-500 text-sm mb-4"><i class="fa-solid fa-building mr-1"></i>${j.company}</p><div class="mt-auto border-t border-slate-100 pt-4 flex justify-between items-center"><span class="font-bold text-slate-800">${j.salary}</span><button class="bg-slate-900 text-white px-4 py-1.5 rounded-lg text-xs font-bold">Apply</button></div></div>`).join('');
+        // POPULATE CAREER JOBS WITH FUNCTIONAL APPLY BUTTON
+        document.getElementById('jobs-container').innerHTML = jobs.map(j => `
+          <div class="glass-card p-6 flex flex-col h-full border-t-4 border-t-emerald-500 relative">
+            <span class="bg-emerald-50 text-emerald-700 font-bold text-[10px] px-2 py-1 rounded self-start uppercase">${j.type || 'Full-Time'}</span>
+            <h3 class="text-xl font-serif font-bold text-slate-900 mb-1 mt-3">${j.title}</h3>
+            <p class="text-slate-500 text-sm mb-4"><i class="fa-solid fa-building mr-1"></i>${j.company}</p>
+            <div class="mt-auto border-t border-slate-100 pt-4 flex justify-between items-center">
+              <span class="font-bold text-slate-800">${j.salary}</span>
+              <button onclick="openJobModal('${j.title.replace(/'/g, "\\'")}', '${j.company.replace(/'/g, "\\'")}')" class="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2 rounded-lg text-xs font-bold transition shadow-md">
+                Apply Now
+              </button>
+            </div>
+          </div>
+        `).join('');
         
         document.getElementById('webinar-grid').innerHTML = webinars.map(w => `<div class="glass-card overflow-hidden relative border border-slate-100">
           <div class="bg-slate-800 h-32 flex items-center justify-center relative"><i class="fa-solid fa-play text-4xl text-white/30"></i><div class="absolute top-2 right-2 bg-slate-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase">RECORDED</div></div><div class="p-5"><h3 class="font-serif font-bold text-lg text-slate-900 mb-1">${w.title}</h3><p class="text-slate-500 text-sm mb-4"><i class="fa-solid fa-microphone-lines mr-1"></i>${w.speaker}</p><button class="w-full bg-slate-100 text-slate-900 font-bold py-2 rounded-lg text-sm hover:bg-slate-200">Watch Replay</button></div></div>`).join('');
@@ -828,7 +912,8 @@
         closeConfirmModal();
       }
     }
-function broadcastQuiz() {
+
+    function broadcastQuiz() {
       if (userRole !== 'faculty') return;
       
       const q = document.getElementById('q-text').value;
@@ -852,7 +937,7 @@ function broadcastQuiz() {
         } 
       });
       
-      showToast("Broadcast Sent.", "success"); 
+      showToast("Broadcast Sent with 4 Options.", "success"); 
       
       document.getElementById('q-text').value = ''; 
       document.getElementById('q-opt1').value = ''; 
@@ -900,7 +985,7 @@ function broadcastQuiz() {
         return;
       }
       if (userRole !== 'student') {
-        showToast("Only logged-in students can submit quiz answers. Faculty cannot play.", "error");
+        showToast("Only logged-in students can submit quiz answers.", "error");
         return;
       }
       
@@ -922,7 +1007,7 @@ function broadcastQuiz() {
     socket.on('update_leaderboard', (list) => {
       document.getElementById('leaderboard').innerHTML = list.map((u, i) => `<div class="flex justify-between items-center py-2 border-b border-slate-800 last:border-0"><div class="flex items-center gap-2"><div class="${i < 3 ? 'text-amber-400' : 'text-slate-500'} font-bold">${i+1}</div><span class="font-bold text-sm">${u.name}</span></div><span class="font-bold text-amber-400">${u.score}</span></div>`).join('');
     });
-
+    
   </script>
 </body>
 </html>
