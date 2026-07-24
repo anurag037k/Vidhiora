@@ -30,7 +30,7 @@
     
     /* Custom Image Banner */
     .hero-image-banner {
-      background-image: url('./vidhiora-banner.jpeg');
+      background-image: url('vidhiora-banner.jpeg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -92,14 +92,14 @@
 
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="lg:hidden bg-white border-b border-slate-100 px-4 pt-2 pb-4 space-y-2 shadow-lg absolute w-full z-50">
-      <button onclick="nav('home'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Home</button>
-      <button onclick="nav('cases'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Landmark Cases</button>
-      <button onclick="nav('blogs'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Articles & Blogs</button>
-      <button onclick="nav('notes'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Study Notes</button>
-      <button onclick="nav('webinar'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Webinars</button>
-      <button onclick="nav('quiz'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Live Quiz</button>
-      <button onclick="nav('qa'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Q&A</button>
-      <button onclick="nav('jobs'); toggleMobileMenu()" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Career</button>
+   <button onclick="nav('home')" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Home</button>
+      <button onclick="nav('cases')" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Landmark Cases</button>
+      <button onclick="nav('blogs')" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Articles & Blogs</button>
+      <button onclick="nav('notes')" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Study Notes</button>
+      <button onclick="nav('webinar')" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Webinars</button>
+      <button onclick="nav('quiz')" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Live Quiz</button>
+      <button onclick="nav('qa')" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Q&A</button>
+      <button onclick="nav('jobs')" class="block w-full text-left px-4 py-2.5 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg">Career</button>
       
       <div id="mobile-auth-btn" class="pt-2">
         <button onclick="openAuthModal(); toggleMobileMenu()" class="w-full btn-gold font-bold py-3 rounded-xl shadow-lg text-slate-900">Sign In</button>
@@ -490,12 +490,12 @@
       }, 3500);
     }
 
-    function nav(pageId) {
+   function nav(pageId) {
       if (pageId === 'admin' && userRole !== 'faculty') return openAuthModal('faculty');
-      
+
       // Hide all pages
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      
+
       // Activate target page
       const activePage = document.getElementById(pageId);
       if (activePage) {
@@ -504,16 +504,21 @@
         console.error(`Page with ID "${pageId}" not found.`);
       }
 
-      // Close mobile menu if open
-      const mobileMenu = document.getElementById('mobile-menu');
-      if (mobileMenu && mobileMenu.classList.contains('open')) {
-        mobileMenu.classList.remove('open');
-      }
+      // Close mobile menu
+      closeMobileMenu();
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function toggleMobileMenu() { document.getElementById('mobile-menu').classList.toggle('open'); }
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileMenu) mobileMenu.classList.toggle('open');
+    }
+
+    function closeMobileMenu() {
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileMenu) mobileMenu.classList.remove('open');
+    }
     
     function openAuthModal(defaultTab = 'student') {
       const modal = document.getElementById('auth-modal'); modal.classList.remove('hidden');
