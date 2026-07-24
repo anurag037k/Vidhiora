@@ -46,21 +46,12 @@
 
     #mobile-menu { transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
     #mobile-menu.open { max-height: 500px; opacity: 1; }
+    
     /* Visible scrollbar for mobile menu */
-#mobile-menu::-webkit-scrollbar {
-  width: 6px;
-}
-#mobile-menu::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 8px;
-}
-#mobile-menu::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 8px;
-}
-#mobile-menu::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
+    #mobile-menu::-webkit-scrollbar { width: 6px; }
+    #mobile-menu::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
+    #mobile-menu::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+    #mobile-menu::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
   </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -106,7 +97,7 @@
       </div>
     </div>
 
-<!-- Mobile Menu -->
+    <!-- Mobile Menu -->
     <div id="mobile-menu" class="lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-1.5 shadow-2xl absolute w-full z-50 max-h-[65vh] overflow-y-auto">
       <button onclick="nav('home')" class="block w-full text-left px-4 py-2 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg text-sm">Home</button>
       <button onclick="nav('cases')" class="block w-full text-left px-4 py-2 font-semibold text-slate-700 hover:bg-slate-50 rounded-lg text-sm">Landmark Cases</button>
@@ -136,6 +127,8 @@
         </div>
       </div>
     </div>
+  </nav>
+
   <!-- AUTH MODAL -->
   <div id="auth-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md hidden z-[100] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="auth-modal-content">
@@ -183,8 +176,23 @@
 
     <!-- PAGE 1: HOME -->
     <section id="home" class="page active">
-      <div class="hero-image-banner mb-10 w-full flex items-end justify-center pb-8">
-        <button onclick="nav('webinar')" class="bg-white/10 backdrop-blur-md border border-white/30 text-white hover:bg-white hover:text-slate-900 px-8 py-3 rounded-full font-bold shadow-2xl transition duration-300">Explore Platform <i class="fa-solid fa-arrow-right ml-2"></i></button>
+      <div class="hero-image-banner mb-10 w-full flex flex-col items-center justify-end text-center p-8 text-white rounded-3xl min-h-[420px] bg-cover bg-center">
+        
+        <!-- Heading / Title -->
+        <h1 class="text-3xl md:text-5xl font-serif font-bold mb-3 drop-shadow-md">
+          Welcome to Vidhiora
+        </h1>
+        
+        <!-- Subtitle or Description -->
+        <p class="text-sm md:text-base text-slate-200 max-w-xl mb-6 drop-shadow-sm font-medium">
+          Empowering your legal journey with landmark cases, interactive live quizzes, study notes, and webinars.
+        </p>
+
+        <!-- Explore Button -->
+        <button onclick="nav('webinar')" class="bg-white/10 backdrop-blur-md border border-white/30 text-white hover:bg-white hover:text-slate-900 px-8 py-3 rounded-full font-bold shadow-2xl transition duration-300">
+          Explore Platform <i class="fa-solid fa-arrow-right ml-2"></i>
+        </button>
+
       </div>
       
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -377,7 +385,8 @@
         </div>
       </div>
     </section>
-<!-- PAGE: CONTACT US -->
+
+    <!-- PAGE: CONTACT US -->
     <section id="contact" class="page">
       <div class="mb-8 text-center border-b border-slate-200 pb-6">
         <span class="text-amber-600 font-bold uppercase tracking-widest text-xs">Get In Touch</span>
@@ -386,9 +395,12 @@
       </div>
 
       <div class="max-w-3xl mx-auto glass-card p-4 md:p-6 border-t-4 border-amber-500 bg-white">
-        <!-- TYPEFORM EMBED -->
-        <div data-tf-live="01KY9JQ8SFVHRWY2MVQAWVX2PG"></div><script src="//embed.typeform.com/next/embed.js"></script>
+        <!-- TYPEFORM EMBED CONTAINER -->
+        <div data-tf-live="01KY9JQ8SFVHRWY2MVQAWVX2PG" style="width: 100%; height: 500px;"></div>
+        <script src="//embed.typeform.com/next/embed.js"></script>
+      </div>
     </section>
+
     <!-- PAGE 8: JOBS -->
     <section id="jobs" class="page">
       <div class="mb-10 md:text-center border-b border-slate-200 pb-6">
@@ -523,7 +535,7 @@
       }, 3500);
     }
 
-   function nav(pageId) {
+    function nav(pageId) {
       if (pageId === 'admin' && userRole !== 'faculty') return openAuthModal('faculty');
 
       // Hide all pages
@@ -633,6 +645,7 @@
       document.getElementById('webinar-lock').style.display = 'none'; document.getElementById('webinar-content').classList.remove('hidden');
       document.getElementById('quiz-lock').style.display = 'none'; document.getElementById('quiz-content').classList.remove('hidden');
     }
+
     function handleMobileProfileClick() {
       if (userRole === 'faculty') {
         nav('admin');
@@ -641,6 +654,7 @@
         showToast(`Logged in as ${name}`, 'success');
       }
     }
+
     function logout() {
       userRole = 'guest'; 
       facultyCodeUsed = '';
@@ -852,41 +866,7 @@
     socket.on('update_leaderboard', (list) => {
       document.getElementById('leaderboard').innerHTML = list.map((u, i) => `<div class="flex justify-between items-center py-2 border-b border-slate-800 last:border-0"><div class="flex items-center gap-2"><div class="${i < 3 ? 'text-amber-400' : 'text-slate-500'} font-bold">${i+1}</div><span class="font-bold text-sm">${u.name}</span></div><span class="font-bold text-amber-400">${u.score}</span></div>`).join('');
     });
-    async function handleContactSubmit(event) {
-      event.preventDefault();
-      
-      const submitBtn = document.getElementById('contact-submit-btn');
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
-
-      const name = document.getElementById('contact-name').value;
-      const email = document.getElementById('contact-email').value;
-      const subject = document.getElementById('contact-subject').value;
-      const message = document.getElementById('contact-message').value;
-
-      // REPLACE 'YOUR_FORMSPREE_ID' WITH YOUR FORMSPREE ENDPOINT KEY
-      const FORMSPREE_ENDPOINT = "https://formspree.io/f/YOUR_FORMSPREE_ID";
-
-      try {
-        const response = await fetch(FORMSPREE_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({ name, email, subject, message })
-        });
-
-        if (response.ok) {
-          showToast("Message sent! We will reply to your email soon.", "success");
-          document.getElementById('contact-form').reset();
-        } else {
-          showToast("Failed to send message. Please try again.", "error");
-        }
-      } catch (err) {
-        showToast("Network error. Please check your connection.", "error");
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send Message';
-      }
-    }
+    
   </script>
 </body>
 </html>
