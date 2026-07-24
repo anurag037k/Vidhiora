@@ -316,17 +316,43 @@
       <div class="mb-10 md:text-center border-b border-slate-200 pb-6">
         <h2 class="text-4xl font-serif font-bold text-slate-900 mt-2">Live Quiz Arena</h2>
       </div>
+
+      <!-- Quiz Locked State (When Logged Out) -->
       <div id="quiz-lock" class="glass-card p-12 text-center max-w-xl mx-auto border-t-4 border-t-blue-500">
         <i class="fa-solid fa-shield-halved text-5xl text-slate-300 mb-6"></i>
         <h3 class="text-2xl font-serif font-bold text-slate-800 mb-3">Identify Yourself</h3>
-        <button onclick="openAuthModal()" class="btn-gold text-slate-900 px-8 py-3 rounded-full mt-2 font-bold">Sign In to Play</button>
+        <p class="text-slate-500 text-sm mb-6">You must sign in as a student to participate in live quiz sessions and earn leaderboard points.</p>
+        <button onclick="openAuthModal()" class="btn-gold text-slate-900 px-8 py-3 rounded-full font-bold shadow-md">Sign In to Play</button>
       </div>
+
+      <!-- Quiz Unlocked State (When Logged In) -->
       <div id="quiz-content" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2 glass-card p-8 md:p-12 border-t-4 border-blue-500 bg-white">
-          <div id="question-card" class="hidden"><h3 id="question-text" class="text-2xl font-bold text-slate-800 mb-8"></h3><div id="options-container" class="space-y-4"></div></div>
-          <div id="waiting-msg" class="text-center py-16"><i class="fa-solid fa-circle-notch fa-spin text-5xl text-blue-500 mb-6"></i><h3 class="font-serif text-2xl font-bold text-slate-800">Awaiting Broadcast...</h3></div>
+          
+          <!-- Question Container -->
+          <div id="question-card" class="hidden">
+            <h3 id="question-text" class="text-2xl font-bold text-slate-800 mb-8"></h3>
+            <div id="options-container" class="space-y-4"></div>
+          </div>
+          
+          <!-- Waiting Message -->
+          <div id="waiting-msg" class="text-center py-16">
+            <i class="fa-solid fa-circle-notch fa-spin text-5xl text-blue-500 mb-6"></i>
+            <h3 class="font-serif text-2xl font-bold text-slate-800">Awaiting Broadcast...</h3>
+            <p class="text-slate-500 text-sm mt-2">Stay tuned! Questions will appear here automatically when broadcast by a faculty member.</p>
+          </div>
+
         </div>
-        <div class="glass-card p-8 bg-navy text-white"><h3 class="text-xl font-serif font-bold mb-6 border-b border-slate-700 pb-4 text-amber-400"><i class="fa-solid fa-ranking-star mr-2"></i> Leaderboard</h3><div id="leaderboard" class="space-y-3"></div></div>
+
+        <!-- Leaderboard -->
+        <div class="glass-card p-8 bg-navy text-white">
+          <h3 class="text-xl font-serif font-bold mb-6 border-b border-slate-700 pb-4 text-amber-400">
+            <i class="fa-solid fa-ranking-star mr-2"></i> Leaderboard
+          </h3>
+          <div id="leaderboard" class="space-y-3">
+            <p class="text-xs text-slate-400 text-center py-4">No scores recorded yet today.</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -465,10 +491,25 @@
     }
 
     function nav(pageId) {
-      if(pageId === 'admin' && userRole !== 'faculty') return openAuthModal('faculty');
+      if (pageId === 'admin' && userRole !== 'faculty') return openAuthModal('faculty');
+      
+      // Hide all pages
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      
+      // Activate target page
       const activePage = document.getElementById(pageId);
-      if(activePage) activePage.classList.add('active');
+      if (activePage) {
+        activePage.classList.add('active');
+      } else {
+        console.error(`Page with ID "${pageId}" not found.`);
+      }
+
+      // Close mobile menu if open
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileMenu && mobileMenu.classList.contains('open')) {
+        mobileMenu.classList.remove('open');
+      }
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
